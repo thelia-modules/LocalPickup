@@ -1,0 +1,38 @@
+<div class="general-block-decorator">
+    <div class="col-md-12">
+        <ul id="tabbed-menu" class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#configure_account">{intl l="Configure local pickup price"}</a></li>
+        </ul>
+        <br/>
+        <div class="tab-content">
+            <div id="configure_account" class="tab-pane active form-container">
+            <form action="{url path="/admin/module/localpickup/configure"}" method="post">
+                <div class="panel panel-default">
+                    <div class="panel-heading clearfix">
+                        {intl l="Configure local pickup price"}
+                    </div>
+                    <div class="panel-body">
+                        {form name="localpickup.form"}
+                            {form_hidden_fields form=$form}
+                            {form_field form=$form field="price"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <label for="{$label_attr.for}">
+                                    {$label}
+                                </label>
+
+                                <input type="text" class="form-control" required name="{$name}" id="{$label_attr.for}" pattern="\d+\.?\d*" value="{$value}"/>
+                            </div>
+                            {/form_field}
+
+                        <div class="form-group">
+                            <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-sm btn-default btn-success" title="{intl l='Save changes'}">{intl l='Save changes'} <span class="glyphicon glyphicon-ok"></span></button>
+                        </div>
+                        {/form}
+                    </div>
+                </div>
+            </form>
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database defaultIdMethod="native" name="thelia" namespace="LocalPickup\Model">
+
+    <table name="local_pickup_shipping">
+        <column name="id" primaryKey="true" required="true" type="INTEGER" autoIncrement="true" />
+        <column name="price" required="true" type="DOUBLE" />
+        <behavior name="timestampable" />
+    </table>
+    <external-schema filename="local/config/schema.xml" referenceOnly="true" />
+</database>

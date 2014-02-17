@@ -1,0 +1,41 @@
+LocalPickup module
+==================
+author: Thelia <info@thelia.net>
+
+Summary
+-------
+
+fr_FR:
+1.  Installation
+2.  Utilisation
+
+en_US:
+1.  Install notes
+2.  How to use
+
+
+fr_FR
+-----
+
+### Installation
+
+Pour installer le module retrait sur place, téléchargez l'archive et décompressez la dans <dossier de thelia>/local/modules
+
+### Utilisation
+
+Pour utiliser le module paypal, allez dans le back-office, onglet Modules, et activez le module Paypal,
+puis cliquez sur "Configurer" sur la ligne de Paypal. Renseignez le prix que vous souhaitez donner au retrait sur place
+et enregistrez.
+
+en_US
+-----
+
+### Install notes
+
+To install the local pickup module, download the archive and uncompress it in <path to thelia>/local/modules
+
+
+### How to use
+
+To use the module, you first need to activate it in the back-office, tab Modules, and click on "Configure" on the line
+of paypal module. Enter your paypal login informations and save. Enter the price you want for local pickup and save.

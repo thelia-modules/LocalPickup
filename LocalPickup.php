@@ -27,6 +27,7 @@ use LocalPickup\Model\LocalPickupShippingQuery;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
 use Thelia\Model\Country;
+use Thelia\Model\ModuleQuery;
 use Thelia\Module\BaseModule;
 use Thelia\Module\DeliveryModuleInterface;
 
@@ -37,7 +38,7 @@ use Thelia\Module\DeliveryModuleInterface;
  */
 class LocalPickup extends BaseModule implements DeliveryModuleInterface
 {
-
+    const STATUS_SENT = 4;
     /**
      * calculate and return delivery price
      *
@@ -66,5 +67,10 @@ class LocalPickup extends BaseModule implements DeliveryModuleInterface
     public function getCode()
     {
         return "LocalPickup";
+    }
+
+    public static  function getModCode() {
+        return ModuleQuery::create()
+            ->findOneByCode("LocalPickup")->getId();
     }
 }

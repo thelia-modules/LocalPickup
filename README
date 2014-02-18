@@ -23,7 +23,7 @@ Pour installer le module retrait sur place, téléchargez l'archive et décompre
 
 ### Utilisation
 
-Pour utiliser le module paypal, allez dans le back-office, onglet Modules, et activez le module Paypal,
+Pour utiliser le module de retrait sur place, allez dans le back-office, onglet Modules, et activez le module Paypal,
 puis cliquez sur "Configurer" sur la ligne de Paypal. Renseignez le prix que vous souhaitez donner au retrait sur place
 et enregistrez.
 
@@ -38,4 +38,4 @@ To install the local pickup module, download the archive and uncompress it in <p
 ### How to use
 
 To use the module, you first need to activate it in the back-office, tab Modules, and click on "Configure" on the line
-of paypal module. Enter your paypal login informations and save. Enter the price you want for local pickup and save.
+of paypal module. Enter the price you want for local pickup and save.

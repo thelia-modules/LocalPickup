@@ -11,6 +11,7 @@ namespace LocalPickup\Controller;
 
 use LocalPickup\Model\LocalPickupShipping;
 use Thelia\Controller\Admin\BaseAdminController;
+use Thelia\Core\Translation\Translator;
 use Thelia\Tools\URL;
 
 /**
@@ -22,7 +23,7 @@ class SetDeliveryPrice extends BaseAdminController {
 
     public function configure() {
         $form = new \LocalPickup\Form\SetDeliveryPrice($this->getRequest());
-
+        $errmes="";
         try {
             $vform = $this->validateForm($form);
 
@@ -32,11 +33,14 @@ class SetDeliveryPrice extends BaseAdminController {
                 $newprice = new LocalPickupShipping();
                 $newprice->setPrice((float)$price)
                     ->save();
+            } else {
+                $errmes = Translator::getInstance()->trans("price must be a number !");
             }
-        } catch(\Exception $e) {}
+        } catch(\Exception $e) {
+            $errmes =  $e->getMessage();
+        }
 
-
-        $this->redirectToRoute("admin.module.configure",array(),
+        $this->redirectToRoute("admin.module.configure",array("errmes"=>$errmes),
             array ( 'module_code'=>"LocalPickup",
                 '_controller' => 'Thelia\\Controller\\Admin\\ModuleController::configureAction'));
     }

@@ -12,6 +12,11 @@
                         {intl l="Configure local pickup price"}
                     </div>
                     <div class="panel-body">
+                        {if isset($smarty.get.errmes) and !empty($smarty.get.errmes)}
+                            <div class="alert alert-danger">
+                                {$smarty.get.errmes}
+                            </div>
+                        {/if}
                         {form name="localpickup.form"}
                             {form_hidden_fields form=$form}
                             {form_field form=$form field="price"}

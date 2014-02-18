@@ -24,7 +24,7 @@
 
 namespace LocalPickup\Form;
 
-use LocalPickup\LocalPickup;
+use LocalPickup\Model\LocalPickupShippingQuery;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
@@ -59,7 +59,7 @@ class SetDeliveryPrice extends BaseForm {
                     "for"=>"pricefield"
                 ),
                 "constraints"=>array(new NotBlank()),
-                "data"=> LocalPickup::getPrice()
+                "data"=> LocalPickupShippingQuery::create()->getPrice()
             ))
         ;
     }

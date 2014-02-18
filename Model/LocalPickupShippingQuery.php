@@ -17,5 +17,14 @@ use LocalPickup\Model\Base\LocalPickupShippingQuery as BaseLocalPickupShippingQu
  */
 class LocalPickupShippingQuery extends BaseLocalPickupShippingQuery
 {
-
+    /**
+     * @return float
+     */
+    public function getPrice()
+    {
+        $price = $this->orderById('desc')
+            ->findOne()
+            ->getPrice();
+        return (double)$price;
+    }
 } // LocalPickupShippingQuery

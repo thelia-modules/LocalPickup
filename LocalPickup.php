@@ -37,17 +37,6 @@ use Thelia\Module\DeliveryModuleInterface;
  */
 class LocalPickup extends BaseModule implements DeliveryModuleInterface
 {
-    /**
-     * @return float
-     */
-    public static function getPrice()
-    {
-        $price = LocalPickupShippingQuery::create()
-            ->orderById('desc')
-            ->findOne()
-            ->getPrice();
-        return (double)$price;
-    }
 
     /**
      * calculate and return delivery price
@@ -58,7 +47,7 @@ class LocalPickup extends BaseModule implements DeliveryModuleInterface
      */
     public function getPostage(Country $country)
     {
-        return self::getPrice();
+        return LocalPickupShippingQuery::create()->getPrice();
     }
 
     /**

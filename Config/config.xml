@@ -7,6 +7,10 @@
         <form name="localpickup.form" class="LocalPickup\Form\SetDeliveryPrice" />
     </forms>
 
+    <loops>
+        <loop class="LocalPickup\Loop\LocalAddress" name="address.local" />
+        <loop class="LocalPickup\Loop\LocalPickupId" name="localpickupid" />
+    </loops>
     <services>
         <service id="send.localpickup.mail" class="LocalPickup\Listener\SendEMail" scope="request">
             <argument type="service" id="thelia.parser" />

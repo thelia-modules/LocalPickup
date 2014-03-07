@@ -22,7 +22,7 @@ fr_FR
 
 ### Installation
 
-Pour installer le module retrait sur place, téléchargez l'archive et décompressez la dans <dossier de thelia>/local/modules
+Pour installer le module retrait sur place, téléchargez l'archive et décompressez la dans dossierDeThelia/local/modules
 
 ### Utilisation
 
@@ -39,7 +39,7 @@ et enregistrez.
         Les mêmes variables que la boucle address, mais l'adresse donnée est celle du magasin.
     - Utilisation:
         ```{loop type="address.local" name="yourloopname"}
-            <!-- your template -->
+            <!-- your template -->
         {/loop}```
 2.  localpickupid
     - Arguments: pas d'arguments
@@ -62,7 +62,7 @@ en_US
 
 ### Install notes
 
-To install the local pickup module, download the archive and uncompress it in <path to thelia>/local/modules
+To install the local pickup module, download the archive and uncompress it in pathToThelia/local/modules
 
 
 ### How to use
@@ -70,7 +70,7 @@ To install the local pickup module, download the archive and uncompress it in <p
 To use the module, you first need to activate it in the back-office, tab Modules, and click on "Configure" on the line
 of the module. Enter the price you want for local pickup and save.
 
-### Loops
+### Loops
 1.  address.local
     - Arguments:
         1. id | mandatory | id of the customer's address
@@ -78,7 +78,7 @@ of the module. Enter the price you want for local pickup and save.
         The same variables as address loop, but the given address is the store's address.
     - Usage:
         ```{loop type="address.local" name="yourloopname"}
-            <!-- your template -->
+            <!-- your template -->
         {/loop}```
 2.  localpickupid
     - Arguments: no args

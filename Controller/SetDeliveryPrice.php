@@ -10,7 +10,10 @@ namespace LocalPickup\Controller;
 
 use LocalPickup\Model\LocalPickupShipping;
 use Thelia\Controller\Admin\BaseAdminController;
+use Thelia\Core\Security\AccessManager;
+use Thelia\Core\Security\Resource\AdminResources;
 use Thelia\Core\Translation\Translator;
+use Thelia\Model\Resource;
 
 /**
  * Class SetDeliveryPrice
@@ -21,6 +24,10 @@ class SetDeliveryPrice extends BaseAdminController
 {
     public function configure()
     {
+        if (null !== $response = $this->checkAuth(array(AdminResources::MODULE), array('LocalPickup'), AccessManager::UPDATE)) {
+            return $response;
+        }
+
         $form = new \LocalPickup\Form\SetDeliveryPrice($this->getRequest());
         $errmes="";
         try {

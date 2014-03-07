@@ -21,7 +21,6 @@
 /*                                                                                   */
 /*************************************************************************************/
 
-
 namespace LocalPickup\Loop;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Thelia\Core\Template\Element\ArraySearchLoopInterface;
@@ -32,14 +31,14 @@ use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
 Use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\ConfigQuery;
-use Thelia\Model\CustomerQuery;
 
 /**
  * Class LocalAddress
- * @package LocalPickup\Loop 
+ * @package LocalPickup\Loop
  * @author Thelia <info@thelia.net>
  */
-class LocalAddress extends BaseLoop implements ArraySearchLoopInterface {
+class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
+{
     /**
      * this method returns an array
      *
@@ -51,18 +50,16 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface {
         /** @var \Thelia\Core\HttpFoundation\Session\Session $session */
         $session = $this->container->get('request')->getSession();
 
-
         $address = AddressQuery::create()
             ->filterByCustomerId($session->getCustomerUser()->getId())
             ->findPk($id);
 
-        if($address === null) {
+        if ($address === null) {
             throw new Exception("The requested address doesn't exist");
         }
 
         /** @var \Thelia\Model\Customer $customer */
         $customer = $session->getCustomerUser();
-
 
        return array(
            'Id'=>'0',
@@ -113,7 +110,6 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface {
         ;
         $loopResult->addRow($loopResultRow);
 
-
         return $loopResult;
     }
 
@@ -156,4 +152,4 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface {
         );
     }
 
-} 
+}

@@ -29,7 +29,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
 
-class SetDeliveryPrice extends BaseForm {
+class SetDeliveryPrice extends BaseForm
+{
     /**
      *
      * in this function you add all the fields you need for your Form.

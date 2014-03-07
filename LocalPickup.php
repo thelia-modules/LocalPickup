@@ -38,7 +38,6 @@ use Thelia\Module\DeliveryModuleInterface;
  */
 class LocalPickup extends BaseModule implements DeliveryModuleInterface
 {
-    const STATUS_SENT = 4;
     /**
      * calculate and return delivery price
      *
@@ -69,7 +68,8 @@ class LocalPickup extends BaseModule implements DeliveryModuleInterface
         return "LocalPickup";
     }
 
-    public static  function getModCode() {
+    public static function getModCode()
+    {
         return ModuleQuery::create()
             ->findOneByCode("LocalPickup")->getId();
     }

@@ -23,7 +23,6 @@
 
 namespace LocalPickup\Listener;
 
-
 use LocalPickup\LocalPickup;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Action\BaseAction;
@@ -52,7 +51,7 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
      */
     protected $parser;
 
-    function __construct(ParserInterface $parser,MailerFactory $mailer)
+    public function __construct(ParserInterface $parser,MailerFactory $mailer)
     {
         $this->parser = $parser;
         $this->mailer = $mailer;
@@ -70,10 +69,11 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
      * @params OrderEvent $order
      * Checks if order delivery module is icirelais and if order new status is sent, send an email to the customer.
      */
-    public function update_status(OrderEvent $event) {
-        if($event->getOrder()->getDeliveryModuleId() === LocalPickup::getModCode()) {
+    public function update_status(OrderEvent $event)
+    {
+        if ($event->getOrder()->getDeliveryModuleId() === LocalPickup::getModCode()) {
 
-            if($event->getOrder()->getStatusId() === LocalPickup::STATUS_SENT ) {
+            if ($event->getOrder()->isSent()) {
                 $contact_email = ConfigQuery::read('store_email');
 
                 if ($contact_email) {
@@ -91,7 +91,6 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
 
                     $country = CountryQuery::create()->findPk($store->read("store_country"));
                     $country = CountryI18nQuery::create()->filterById($country->getId())->findOneByLocale($order->getLang()->getLocale())->getTitle();
-
 
                     $this->parser->assign('order_id', $order->getId());
                     $this->parser->assign('order_ref', $order->getRef());
@@ -149,4 +148,4 @@ class SendEMail extends BaseAction implements EventSubscriberInterface
         );
     }
 
-} 
+}

@@ -4,7 +4,6 @@ namespace LocalPickup\Model;
 
 use LocalPickup\Model\Base\LocalPickupShippingQuery as BaseLocalPickupShippingQuery;
 
-
 /**
  * Skeleton subclass for performing query and update operations on the 'local_pickup_shipping' table.
  *
@@ -25,6 +24,7 @@ class LocalPickupShippingQuery extends BaseLocalPickupShippingQuery
         $price = $this->orderById('desc')
             ->findOne()
             ->getPrice();
-        return (double)$price;
+
+        return (double) $price;
     }
 } // LocalPickupShippingQuery

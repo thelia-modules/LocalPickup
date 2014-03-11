@@ -38,7 +38,7 @@ et enregistrez.
     - Sorties:
         Les mêmes variables que la boucle address, mais l'adresse donnée est celle du magasin.
     - Utilisation:
-        ```{loop type="address.local" name="yourloopname"}
+        ```{loop type="address.local" name="yourloopname" id="1"}
             <!-- your template -->
         {/loop}```
 2.  localpickupid
@@ -77,7 +77,7 @@ of the module. Enter the price you want for local pickup and save.
     - Output:
         The same variables as address loop, but the given address is the store's address.
     - Usage:
-        ```{loop type="address.local" name="yourloopname"}
+        ```{loop type="address.local" name="yourloopname" id="1"}
             <!-- your template -->
         {/loop}```
 2.  localpickupid

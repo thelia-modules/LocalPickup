@@ -1,34 +1,24 @@
 <?php
 /*************************************************************************************/
-/*                                                                                   */
-/*      Thelia	                                                                     */
+/*      This file is part of the Thelia package.                                     */
 /*                                                                                   */
 /*      Copyright (c) OpenStudio                                                     */
-/*      email : info@thelia.net                                                      */
+/*      email : dev@thelia.net                                                       */
 /*      web : http://www.thelia.net                                                  */
 /*                                                                                   */
-/*      This program is free software; you can redistribute it and/or modify         */
-/*      it under the terms of the GNU General Public License as published by         */
-/*      the Free Software Foundation; either version 3 of the License                */
-/*                                                                                   */
-/*      This program is distributed in the hope that it will be useful,              */
-/*      but WITHOUT ANY WARRANTY; without even the implied warranty of               */
-/*      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                */
-/*      GNU General Public License for more details.                                 */
-/*                                                                                   */
-/*      You should have received a copy of the GNU General Public License            */
-/*	    along with this program. If not, see <http://www.gnu.org/licenses/>.         */
-/*                                                                                   */
+/*      For the full copyright and license information, please view the LICENSE.txt  */
+/*      file that was distributed with this source code.                             */
 /*************************************************************************************/
 
 namespace LocalPickup\Loop;
+
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Thelia\Core\Template\Element\ArraySearchLoopInterface;
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
+use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
-Use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\ConfigQuery;
 
@@ -46,39 +36,7 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
      */
     public function buildArray()
     {
-        $id = $this->getId();
-        /** @var \Thelia\Core\HttpFoundation\Session\Session $session */
-        $session = $this->container->get('request')->getSession();
-
-        $address = AddressQuery::create()
-            ->filterByCustomerId($session->getCustomerUser()->getId())
-            ->findPk($id);
-
-        if ($address === null) {
-            throw new Exception("The requested address doesn't exist");
-        }
-
-        /** @var \Thelia\Model\Customer $customer */
-        $customer = $session->getCustomerUser();
-
-       return array(
-           'Id'=>'0',
-           'Label'=>$address->getLabel(),
-           'CustomerId'=>$address->getCustomerId(),
-           'TitleId'=>$address->getTitleId(),
-           'Company'=>ConfigQuery::read('store_name'),
-           'Firstname'=>$customer->getFirstname(),
-           'Lastname'=>$customer->getLastname(),
-           'Address1'=>ConfigQuery::read('store_address1'),
-           'Address2'=>ConfigQuery::read('store_address2'),
-           'Address3'=>ConfigQuery::read('store_address3'),
-           'Zipcode'=>ConfigQuery::read('store_zipcode'),
-           'City'=>ConfigQuery::read('store_city'),
-           'CountryId'=>ConfigQuery::read('store_country'),
-           'Phone'=>$address->getPhone(),
-           'Cellphone'=>$address->getCellphone(),
-           'IsDefault'=>'0'
-       );
+        return [ 1 ];
     }
 
     /**
@@ -88,68 +46,50 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
      */
     public function parseResults(LoopResult $loopResult)
     {
-        $address = $loopResult->getResultDataCollection();
+        $id = $this->getId();
+
+        /** @var \Thelia\Model\Customer $customer */
+        $customer = $this->request->getSession()->getCustomerUser();
+
+        /** @var \Thelia\Core\HttpFoundation\Session\Session $session */
+        $address = AddressQuery::create()
+            ->filterByCustomerId($customer->getId())
+            ->findPk($id);
+
+        if ($address === null) {
+            throw new Exception("The requested address doesn't exist");
+        }
+
         $loopResultRow = new LoopResultRow($address);
+
         $loopResultRow
-            ->set("ID", $address['Id'])
-            ->set("LABEL", $address['Label'])
-            ->set("CUSTOMER", $address['CustomerId'])
-            ->set("TITLE", $address['TitleId'])
-            ->set("COMPANY", $address['Company'])
-            ->set("FIRSTNAME", $address['Firstname'])
-            ->set("LASTNAME", $address['Lastname'])
-            ->set("ADDRESS1", $address['Address1'])
-            ->set("ADDRESS2", $address['Address2'])
-            ->set("ADDRESS3", $address['Address3'])
-            ->set("ZIPCODE", $address['Zipcode'])
-            ->set("CITY", $address['City'])
-            ->set("COUNTRY", $address['CountryId'])
-            ->set("PHONE", $address['Phone'])
-            ->set("CELLPHONE", $address['Cellphone'])
-            ->set("DEFAULT", $address['IsDefault'])
+            ->set("ID", 0) // This address is synthetic, and  not stored in the DB
+            ->set("LABEL", $address->getLabel())
+            ->set("CUSTOMER", $address->getLabel())
+            ->set("TITLE", $address->getTitleId())
+            ->set("COMPANY", ConfigQuery::read('store_name'))
+            ->set("FIRSTNAME", $customer->getFirstname())
+            ->set("LASTNAME", $customer->getLastname())
+            ->set("ADDRESS1", ConfigQuery::read('store_address1'))
+            ->set("ADDRESS2", ConfigQuery::read('store_address2'))
+            ->set("ADDRESS3", ConfigQuery::read('store_address3'))
+            ->set("ZIPCODE", ConfigQuery::read('store_zipcode'))
+            ->set("CITY", ConfigQuery::read('store_city'))
+            ->set("COUNTRY", ConfigQuery::read('store_country'))
+            ->set("PHONE", $address->getPhone())
+            ->set("CELLPHONE", $address->getCellphone())
+            ->set("DEFAULT", false)
         ;
+
         $loopResult->addRow($loopResultRow);
 
         return $loopResult;
     }
 
-    /**
-     *
-     * define all args used in your loop
-     *
-     *
-     * example :
-     *
-     * public function getArgDefinitions()
-     * {
-     *  return new ArgumentCollection(
-     *       Argument::createIntListTypeArgument('id'),
-     *           new Argument(
-     *           'ref',
-     *           new TypeCollection(
-     *               new Type\AlphaNumStringListType()
-     *           )
-     *       ),
-     *       Argument::createIntListTypeArgument('category'),
-     *       Argument::createBooleanTypeArgument('new'),
-     *       Argument::createBooleanTypeArgument('promo'),
-     *       Argument::createFloatTypeArgument('min_price'),
-     *       Argument::createFloatTypeArgument('max_price'),
-     *       Argument::createIntTypeArgument('min_stock'),
-     *       Argument::createFloatTypeArgument('min_weight'),
-     *       Argument::createFloatTypeArgument('max_weight'),
-     *       Argument::createBooleanTypeArgument('current'),
-     *
-     *   );
-     * }
-     *
-     * @return \Thelia\Core\Template\Loop\Argument\ArgumentCollection
-     */
     protected function getArgDefinitions()
     {
         return new ArgumentCollection(
             Argument::createIntTypeArgument('id',null,true)
         );
     }
-
 }

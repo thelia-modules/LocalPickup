@@ -1,43 +1,51 @@
-<div class="general-block-decorator">
-    <div class="col-md-12">
-        <ul id="tabbed-menu" class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#configure_account">{intl l="Configure local pickup price"}</a></li>
-        </ul>
-        <br/>
-        <div class="tab-content">
-            <div id="configure_account" class="tab-pane active form-container">
-            <form action="{url path="/admin/module/localpickup/configure"}" method="post">
-                <div class="panel panel-default">
-                    <div class="panel-heading clearfix">
-                        {intl l="Configure local pickup price"}
-                    </div>
-                    <div class="panel-body">
+<div class="row">
+    <div class="col-md-12 general-block-decorator">
+        <div class="row">
+            <div class="col-md-12 title title-without-tabs">
+                {intl d='localpickup.ai' l="Configure local pickup price"}
+            </div>
+        </div>
+
+        <div class="form-container">
+            <div class="row">
+                <div class="col-md-12">
+                    {form name="localpickup.form"}
+
+                    <form action="{url path="/admin/module/localpickup/configure"}" method="post">
+                        {form_hidden_fields form=$form}
+
+                        {include file = "includes/inner-form-toolbar.html"
+                        hide_flags = true
+                        page_url   = "{url path='/admin/module/LocalPickup'}"
+                        close_url  = "{url path='/admin/modules'}"
+                        }
+
                         {if isset($smarty.get.errmes) and !empty($smarty.get.errmes)}
                             <div class="alert alert-danger">
                                 {$smarty.get.errmes}
                             </div>
                         {/if}
-                        {form name="localpickup.form"}
-                            {form_hidden_fields form=$form}
-                            {form_field form=$form field="price"}
-                            <div class="form-group {if $error}has-error{/if}">
-                                <label for="{$label_attr.for}">
-                                    {$label}
-                                </label>
 
-                                <input type="text" class="form-control" required name="{$name}" id="{$label_attr.for}" pattern="\d+\.?\d*" value="{$value}"/>
-                            </div>
-                            {/form_field}
-
-                        <div class="form-group">
-                            <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-sm btn-default btn-success" title="{intl l='Save changes'}">{intl l='Save changes'} <span class="glyphicon glyphicon-ok"></span></button>
+                        <div class="col-sm-3">
+                            {render_form_field form=$form field="price"}
                         </div>
-                        {/form}
-                    </div>
+
+                        {loop name="mailing" type="message" variable="order_confirmation_localpickup" backend_context="1" lang="$lang_id"}
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <p class="form-control-static">
+                                        {intl l='Un e-mail est envoyé à vos clients lors de l\'expédition de leur colis. Vous pouvez <a href="%url">modifier cet email ici</a>.'
+                                        url = {url path="/admin/configuration/messages/update" message_id=$ID}
+                                        d='localpickup.ai'
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        {/loop}
+                    </form>
+                    {/form}
                 </div>
-            </form>
             </div>
         </div>
-
     </div>
 </div>

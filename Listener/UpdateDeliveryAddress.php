@@ -1,24 +1,13 @@
 <?php
 /*************************************************************************************/
-/*                                                                                   */
-/*      Thelia	                                                                     */
+/*      This file is part of the Thelia package.                                     */
 /*                                                                                   */
 /*      Copyright (c) OpenStudio                                                     */
-/*      email : info@thelia.net                                                      */
+/*      email : dev@thelia.net                                                       */
 /*      web : http://www.thelia.net                                                  */
 /*                                                                                   */
-/*      This program is free software; you can redistribute it and/or modify         */
-/*      it under the terms of the GNU General Public License as published by         */
-/*      the Free Software Foundation; either version 3 of the License                */
-/*                                                                                   */
-/*      This program is distributed in the hope that it will be useful,              */
-/*      but WITHOUT ANY WARRANTY; without even the implied warranty of               */
-/*      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the                */
-/*      GNU General Public License for more details.                                 */
-/*                                                                                   */
-/*      You should have received a copy of the GNU General Public License            */
-/*	    along with this program. If not, see <http://www.gnu.org/licenses/>.         */
-/*                                                                                   */
+/*      For the full copyright and license information, please view the LICENSE.txt  */
+/*      file that was distributed with this source code.                             */
 /*************************************************************************************/
 
 namespace LocalPickup\Listener;
@@ -43,9 +32,10 @@ class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterfa
      * @param  OrderEvent $event
      * @throws \Exception
      */
-    public function update_address(OrderEvent $event)
+    public function updateDeliveryAddress(OrderEvent $event)
     {
-        if ($event->getOrder()->getDeliveryModuleId() === LocalPickup::getModCode()) {
+        if ($event->getOrder()->getDeliveryModuleId() === LocalPickup::getModuleId()) {
+
             $address_id = $event->getOrder()->getDeliveryOrderAddressId();
             $address = OrderAddressQuery::create()->findPk($address_id);
 
@@ -84,9 +74,9 @@ class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterfa
         }
     }
 
-    public function set_address(OrderEvent $event)
+    public function setDeliveryAddress(OrderEvent $event)
     {
-        if ($event->getOrder()->getDeliveryModuleId() === LocalPickup::getModCode()) {
+        if ($event->getOrder()->getDeliveryModuleId() === LocalPickup::getModuleId()) {
             $event->setDeliveryAddress(null);
         }
     }
@@ -114,8 +104,8 @@ class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterfa
     public static function getSubscribedEvents()
     {
         return array(
-            TheliaEvents::ORDER_BEFORE_PAYMENT=>array("update_address", 128),
-            TheliaEvents::ORDER_SET_DELIVERY_MODULE=>array("set_address", 128)
+            TheliaEvents::ORDER_BEFORE_PAYMENT=>array("updateDeliveryAddress", 128),
+            TheliaEvents::ORDER_SET_DELIVERY_MODULE=>array("setDeliveryAddress", 128)
         );
     }
 

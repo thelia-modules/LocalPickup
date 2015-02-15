@@ -4,21 +4,27 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
     <forms>
-        <form name="localpickup.form" class="LocalPickup\Form\SetDeliveryPrice" />
+        <form name="localpickup.form" class="LocalPickup\Form\ConfigurationForm" />
     </forms>
 
     <loops>
         <loop class="LocalPickup\Loop\LocalAddress" name="address.local" />
-        <loop class="LocalPickup\Loop\LocalPickupId" name="localpickupid" />
     </loops>
+
     <services>
-        <service id="send.localpickup.mail" class="LocalPickup\Listener\SendEMail" scope="request">
-            <argument type="service" id="thelia.parser" />
+        <service id="send.localpickup.mail" class="LocalPickup\Listener\SendEmailNotification" scope="request">
             <argument type="service" id="mailer"/>
             <tag name="kernel.event_subscriber"/>
         </service>
+
         <service id="update.localpickup.delivery.address" class="LocalPickup\Listener\UpdateDeliveryAddress">
             <tag name="kernel.event_subscriber" />
         </service>
     </services>
+
+    <hooks>
+        <hook id="localpickup.delivery_address.hook" class="LocalPickup\Hook\DeliveryAddressHook" scope="request">
+            <tag name="hook.event_listener" event="order-invoice.delivery-address" method="displayLocalPickupAddress" />
+        </hook>
+    </hooks>
 </config>

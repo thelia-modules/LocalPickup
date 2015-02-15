@@ -1,6 +1,6 @@
 <?php
 
 return array(
-    'Price' => 'Prix',
-    'price must be a number !' => 'Le prix doit être un nombre !',
+    'Delivery price' => 'Prix de mise à disposition',
+    'Enter the price for a local pickup delivery' => 'Indiquez le prix d\'un retrait en magasin',
 );

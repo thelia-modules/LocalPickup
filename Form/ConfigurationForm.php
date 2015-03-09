@@ -23,14 +23,14 @@ class ConfigurationForm extends BaseForm
         $this->formBuilder
             ->add(
                 'price',
-                'money',
+                'number',
                 [
                     'constraints' => [ new NotBlank() ],
                     'data' => LocalPickup::getConfigValue('price', 0),
                     'label' => $this->translator->trans('Delivery price', [], LocalPickup::MODULE_DOMAIN),
                     'label_attr' => [
                         'for' => 'pricefield',
-                        'help' => $this->translator->trans('Enter the price for a local pickup delivery', [], LocalPickup::MODULE_DOMAIN),
+                        'help' => $this->translator->trans('Enter the price for a local pick up', [], LocalPickup::MODULE_DOMAIN),
                     ],
                 ]
             )

@@ -13,6 +13,7 @@
 namespace LocalPickup;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Thelia\Install\Database;
 use Thelia\Model\Country;
 use Thelia\Module\AbstractDeliveryModule;
 

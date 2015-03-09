@@ -21,7 +21,7 @@
         <company>Open Studio, CQFDev</company>
         <email>info@thelia.net, franck@cqfdev.fr</email>
     </author>
-    <type>classic</type>
+    <type>delivery</type>
     <thelia>2.1.0</thelia>
     <stability>beta</stability>
 </module>

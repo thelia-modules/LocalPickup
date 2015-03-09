@@ -1,6 +1,6 @@
 <?php
 
 return array(
-    'Price' => 'Price',
-    'price must be a number !' => 'price must be a number !',
+    'Delivery price' => 'Delivery price',
+    'Enter the price for a local pick up' => 'Enter the price for a local pick up',
 );

@@ -10,43 +10,24 @@
 /*      file that was distributed with this source code.                             */
 /*************************************************************************************/
 
-namespace LocalPickup;
+namespace LocalPickup\Hook;
 
-use Propel\Runtime\Connection\ConnectionInterface;
-use Thelia\Install\Database;
-use Thelia\Model\Country;
-use Thelia\Module\AbstractDeliveryModule;
+use Thelia\Core\Event\Hook\HookRenderEvent;
+use Thelia\Core\Hook\BaseHook;
+
 
 /**
- * Class LocalPickup
- * @package LocalPickup
- * @author Thelia <info@thelia.net>
+ * Class CarouselHook
+ * @package Carousel\Hook
+ * @author  Franck Allimant <franck@cqfdev.fr>
  */
-class LocalPickup extends AbstractDeliveryModule
+class DeliveryAddressHook extends BaseHook
 {
-    const MODULE_DOMAIN = 'localpickup';
 
-    /**
-     * calculate and return delivery price
-     *
-     * @param Country $country
-     *
-     * @return double
-     */
-    public function getPostage(Country $country)
+    public function displayLocalPickupAddress(HookRenderEvent $event)
     {
-        return $this->getConfigValue('price', 0);
+        $event->add(
+            $this->render('pickup-address.html')
+        );
     }
-
-    public function isValidDelivery(Country $country)
-    {
-        return true;
-    }
-
-    public function postActivation(ConnectionInterface $con = null)
-    {
-        $database = new Database($con->getWrappedConnection());
-
-        $database->insertSql(null, array(__DIR__."/Config/thelia.sql"));
-    }
-}
+} 

@@ -11,6 +11,13 @@
         <loop class="LocalPickup\Loop\LocalAddress" name="address.local" />
         <loop class="LocalPickup\Loop\LocalPickupId" name="localpickupid" />
     </loops>
+
+    <hooks>
+        <hook id="local.pickup.hook" class="LocalPickup\Hook\HookManager" scope="request">
+            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration" />
+        </hook>
+    </hooks>
+
     <services>
         <service id="send.localpickup.mail" class="LocalPickup\Listener\SendEMail" scope="request">
             <argument type="service" id="thelia.parser" />

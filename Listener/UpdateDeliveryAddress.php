@@ -36,6 +36,7 @@ use Thelia\Model\ConfigQuery;
 /**
  * Class UpdateDeliveryAddress
  * @package LocalPickup\Listener
+ * @contributor Thomas Arnaud <tarnaud@openstudio.fr>
  */
 class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterface
 {

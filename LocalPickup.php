@@ -29,8 +29,6 @@ use Thelia\Install\Database;
 use Thelia\Model\Country;
 use Thelia\Model\ModuleQuery;
 use Thelia\Module\AbstractDeliveryModule;
-use Thelia\Module\BaseModule;
-use Thelia\Module\DeliveryModuleInterface;
 
 /**
  * Class LocalPickup
@@ -56,7 +54,7 @@ class LocalPickup extends AbstractDeliveryModule
      */
     public function postActivation(ConnectionInterface $con = null)
     {
-        $database = new Database($con->getWrappedConnection());
+        $database = new Database($con);
 
         $database->insertSql(null, array(__DIR__."/Config/thelia.sql"));
     }

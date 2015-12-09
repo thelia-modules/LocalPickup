@@ -17,6 +17,10 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
 
+/**
+ * Class SetDeliveryPrice
+ * @package LocalPickup\Form
+ */
 class SetDeliveryPrice extends BaseForm
 {
     /**

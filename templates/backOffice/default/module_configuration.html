@@ -1,0 +1,36 @@
+<div class="general-block-decorator">
+    <div class="row">
+        <div class="col-md-12 title title-without-tabs">
+            {intl l='Configure local pickup price' d='localPickup.bo.default'}
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-container">
+                    <form method="POST" action="{url path="/admin/module/localpickup/configure"}">
+                        {form name="localpickup.form"}
+                            {if isset($smarty.get.errmes) and !empty($smarty.get.errmes)}
+                                <div class="alert alert-danger">
+                                    {$smarty.get.errmes}
+                                </div>
+                            {/if}
+
+                            {form_hidden_fields form=$form}
+
+                            {form_field form=$form field="price"}
+                            <div class="form-group {if $error}has-error{/if}">
+                                <label for="{$label_attr.for}">{$label}</label>
+                                <input type="text" class="form-control" required name="{$name}" id="{$label_attr.for}" pattern="\d+\.?\d*" value="{$value}"/>
+                            </div>
+                            {/form_field}
+
+                            <div class="form-group">
+                                <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-sm btn-default btn-success" title="{intl l='Save changes' d='localPickup.bo.default'}">{intl l='Save changes' d='localPickup.bo.default'} <span class="glyphicon glyphicon-ok"></span></button>
+                            </div>
+                        {/form}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

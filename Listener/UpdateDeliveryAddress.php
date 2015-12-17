@@ -24,7 +24,6 @@
 namespace LocalPickup\Listener;
 
 use LocalPickup\LocalPickup;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Thelia\Action\BaseAction;
 use Thelia\Core\Event\Order\OrderAddressEvent;
@@ -36,6 +35,7 @@ use Thelia\Model\ConfigQuery;
 /**
  * Class UpdateDeliveryAddress
  * @package LocalPickup\Listener
+ * @contributor Thomas Arnaud <tarnaud@openstudio.fr>
  */
 class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterface
 {
@@ -71,7 +71,8 @@ class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterfa
                         $city,
                         $country,
                         $address->getPhone(),
-                        $name
+                        $name,
+                        $address->getCellphone()
                     );
 
                     $address_event->setOrderAddress($address);

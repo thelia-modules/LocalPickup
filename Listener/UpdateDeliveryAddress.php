@@ -115,9 +115,8 @@ class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterfa
     public static function getSubscribedEvents()
     {
         return array(
-            TheliaEvents::ORDER_BEFORE_PAYMENT=>array("update_address", 128),
+            TheliaEvents::ORDER_BEFORE_PAYMENT=>array("update_address", 130),
             TheliaEvents::ORDER_SET_DELIVERY_MODULE=>array("set_address", 128)
         );
     }
-
 }

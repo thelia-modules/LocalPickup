@@ -22,7 +22,18 @@ fr_FR
 
 ### Installation
 
-Pour installer le module retrait sur place, téléchargez l'archive et décompressez la dans dossierDeThelia/local/modules
+#### Manually
+
+* Copiez le module dans le dossier ```<thelia_root>/local/modules/```  et assurez-vous que le nom du module est bien LocalPickup.
+* Activez le depuis votre interface d'administration Thelia.
+
+#### Composer
+
+Ajoutez le module à votre fichier composer.json principal :
+
+```
+composer require thelia/local-pickup-module:~1.0
+```
 
 ### Utilisation
 
@@ -62,8 +73,18 @@ en_US
 
 ### Install notes
 
-To install the local pickup module, download the archive and uncompress it in pathToThelia/local/modules
+#### Manually
 
+* Copy the module into ```<thelia_root>/local/modules/``` directory and be sure that the name of the module is LocalPickup.
+* Activate it in your thelia administration panel
+
+#### Composer
+
+Add it in your main thelia composer.json file:
+
+```
+composer require thelia/local-pickup-module:~1.0
+```
 
 ### How to use
 

@@ -12,6 +12,7 @@
 
 namespace LocalPickup\Form;
 
+use LocalPickup\LocalPickup;
 use LocalPickup\Model\LocalPickupShippingQuery;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
@@ -23,31 +24,11 @@ use Thelia\Form\BaseForm;
  */
 class SetDeliveryPrice extends BaseForm
 {
-    /**
-     *
-     * in this function you add all the fields you need for your Form.
-     * Form this you have to call add method on $this->formBuilder attribute :
-     *
-     * $this->formBuilder->add("name", "text")
-     *   ->add("email", "email", array(
-     *           "attr" => array(
-     *               "class" => "field"
-     *           ),
-     *           "label" => "email",
-     *           "constraints" => array(
-     *               new \Symfony\Component\Validator\Constraints\NotBlank()
-     *           )
-     *       )
-     *   )
-     *   ->add('age', 'integer');
-     *
-     * @return null
-     */
     protected function buildForm()
     {
         $this->formBuilder
             ->add("price","text", array(
-                "label"=>Translator::getInstance()->trans("Price"),
+                "label"=>Translator::getInstance()->trans("Price", [], LocalPickup::DOMAIN_NAME),
                 "label_attr"=>array(
                     "for"=>"pricefield"
                 ),

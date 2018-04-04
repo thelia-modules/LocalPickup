@@ -37,6 +37,8 @@ use Thelia\Module\AbstractDeliveryModule;
  */
 class LocalPickup extends AbstractDeliveryModule
 {
+    const DOMAIN_NAME = 'localpickup';
+
     /**
      * calculate and return delivery price
      *

@@ -22,13 +22,14 @@
 /*************************************************************************************/
 
 namespace LocalPickup\Loop;
+
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Thelia\Core\Template\Element\ArraySearchLoopInterface;
 use Thelia\Core\Template\Element\BaseLoop;
 use Thelia\Core\Template\Element\LoopResult;
+use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Core\Template\Loop\Argument\Argument;
 use Thelia\Core\Template\Loop\Argument\ArgumentCollection;
-Use Thelia\Core\Template\Element\LoopResultRow;
 use Thelia\Model\AddressQuery;
 use Thelia\Model\ConfigQuery;
 
@@ -36,19 +37,19 @@ use Thelia\Model\ConfigQuery;
  * Class LocalAddress
  * @package LocalPickup\Loop
  * @author Thelia <info@thelia.net>
+ * @method int getId()
  */
 class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
 {
     /**
-     * this method returns an array
-     *
-     * @return array
+     * @inheritdoc
      */
     public function buildArray()
     {
         $id = $this->getId();
+
         /** @var \Thelia\Core\HttpFoundation\Session\Session $session */
-        $session = $this->container->get('request')->getSession();
+        $session = $this->requestStack->getCurrentRequest()->getSession();
 
         $address = AddressQuery::create()
             ->filterByCustomerId($session->getCustomerUser()->getId())
@@ -61,35 +62,34 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
         /** @var \Thelia\Model\Customer $customer */
         $customer = $session->getCustomerUser();
 
-       return array(
-           'Id'=>'0',
-           'Label'=>$address->getLabel(),
-           'CustomerId'=>$address->getCustomerId(),
-           'TitleId'=>$address->getTitleId(),
-           'Company'=>ConfigQuery::read('store_name'),
-           'Firstname'=>$customer->getFirstname(),
-           'Lastname'=>$customer->getLastname(),
-           'Address1'=>ConfigQuery::read('store_address1'),
-           'Address2'=>ConfigQuery::read('store_address2'),
-           'Address3'=>ConfigQuery::read('store_address3'),
-           'Zipcode'=>ConfigQuery::read('store_zipcode'),
-           'City'=>ConfigQuery::read('store_city'),
-           'CountryId'=>ConfigQuery::read('store_country'),
-           'Phone'=>$address->getPhone(),
-           'Cellphone'=>$address->getCellphone(),
-           'IsDefault'=>'0'
-       );
+        return [
+            'Id'         => 0,
+            'Label'      => $address->getLabel(),
+            'CustomerId' => $address->getCustomerId(),
+            'TitleId'    => $address->getTitleId(),
+            'Company'    => ConfigQuery::read('store_name'),
+            'Firstname'  => $customer->getFirstname(),
+            'Lastname'   => $customer->getLastname(),
+            'Address1'   => ConfigQuery::read('store_address1'),
+            'Address2'   => ConfigQuery::read('store_address2'),
+            'Address3'   => ConfigQuery::read('store_address3'),
+            'Zipcode'    => ConfigQuery::read('store_zipcode'),
+            'City'       => ConfigQuery::read('store_city'),
+            'CountryId'  => ConfigQuery::read('store_country'),
+            'Phone'      => $address->getPhone(),
+            'Cellphone'  => $address->getCellphone(),
+            'IsDefault'  => 0
+        ];
     }
 
     /**
-     * @param LoopResult $loopResult
-     *
-     * @return LoopResult
+     * @inheritdoc
      */
     public function parseResults(LoopResult $loopResult)
     {
         $address = $loopResult->getResultDataCollection();
         $loopResultRow = new LoopResultRow($address);
+
         $loopResultRow
             ->set("ID", $address['Id'])
             ->set("LABEL", $address['Label'])
@@ -108,48 +108,19 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
             ->set("CELLPHONE", $address['Cellphone'])
             ->set("DEFAULT", $address['IsDefault'])
         ;
+
         $loopResult->addRow($loopResultRow);
 
         return $loopResult;
     }
 
     /**
-     *
-     * define all args used in your loop
-     *
-     *
-     * example :
-     *
-     * public function getArgDefinitions()
-     * {
-     *  return new ArgumentCollection(
-     *       Argument::createIntListTypeArgument('id'),
-     *           new Argument(
-     *           'ref',
-     *           new TypeCollection(
-     *               new Type\AlphaNumStringListType()
-     *           )
-     *       ),
-     *       Argument::createIntListTypeArgument('category'),
-     *       Argument::createBooleanTypeArgument('new'),
-     *       Argument::createBooleanTypeArgument('promo'),
-     *       Argument::createFloatTypeArgument('min_price'),
-     *       Argument::createFloatTypeArgument('max_price'),
-     *       Argument::createIntTypeArgument('min_stock'),
-     *       Argument::createFloatTypeArgument('min_weight'),
-     *       Argument::createFloatTypeArgument('max_weight'),
-     *       Argument::createBooleanTypeArgument('current'),
-     *
-     *   );
-     * }
-     *
-     * @return \Thelia\Core\Template\Loop\Argument\ArgumentCollection
+     * @inheritdoc
      */
     protected function getArgDefinitions()
     {
         return new ArgumentCollection(
-            Argument::createIntTypeArgument('id',null,true)
+            Argument::createIntTypeArgument('id', null, true)
         );
     }
-
 }

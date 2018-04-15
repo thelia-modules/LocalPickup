@@ -23,11 +23,9 @@
 
 namespace LocalPickup;
 
-use LocalPickup\Model\LocalPickupShippingQuery;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Thelia\Install\Database;
 use Thelia\Model\Country;
-use Thelia\Model\ModuleQuery;
 use Thelia\Module\AbstractDeliveryModule;
 
 /**
@@ -39,52 +37,37 @@ class LocalPickup extends AbstractDeliveryModule
 {
     const DOMAIN_NAME = 'localpickup';
 
+    const PRICE_VAR_NAME = 'price';
+
     /**
-     * calculate and return delivery price
-     *
-     * @param Country $country
-     *
-     * @return double
+     * @inheritdoc
      */
     public function getPostage(Country $country)
     {
-        return LocalPickupShippingQuery::create()->getPrice();
+        return floatval(LocalPickup::getConfigValue(self::PRICE_VAR_NAME, 0));
     }
+
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    {
+        if ($newVersion === '1.2') {
+            $db = new Database($con);
+
+            // Migrate previous price from database to module config
+            try {
+                $statement = $db->execute("select price from local_pickup_shipping order by id desc limit 1");
+
+                $price = floatval($statement->fetchColumn(0));
+
+                LocalPickup::setConfigValue(self::PRICE_VAR_NAME, $price);
+            } catch (\Exception $ex) {
+                //LocalPickup::setConfigValue(self::PRICE_VAR_NAME, 0);
+            }
+        }
+    }
+
 
     /**
-     * @param ConnectionInterface $con
-     */
-    public function postActivation(ConnectionInterface $con = null)
-    {
-        $database = new Database($con);
-
-        $database->insertSql(null, array(__DIR__."/Config/thelia.sql"));
-    }
-
-    /**
-     * @return string
-     */
-    public function getCode()
-    {
-        return "LocalPickup";
-    }
-
-    public static function getModCode()
-    {
-        return ModuleQuery::create()
-            ->findOneByCode("LocalPickup")->getId();
-    }
-
-    /**
-     * This method is called by the Delivery  loop, to check if the current module has to be displayed to the customer.
-     * Override it to implements your delivery rules/
-     *
-     * If you return true, the delivery method will de displayed to the customer
-     * If you return false, the delivery method will not be displayed
-     *
-     * @param Country $country the country to deliver to.
-     *
-     * @return boolean
+     * @inheritdoc
      */
     public function isValidDelivery(Country $country)
     {

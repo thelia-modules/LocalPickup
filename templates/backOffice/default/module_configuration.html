@@ -18,7 +18,7 @@
 
                         {custom_render_form_field field="price"}
                             <div class="input-group">
-                                <input type="text" {form_field_attributes field="price"}>
+                                <input type="text" {form_field_attributes field="price" value=$price}>
                                 <span class="input-group-addon">
                                     {currency attr="symbol"}
                                 </span>
@@ -26,7 +26,8 @@
                         {/custom_render_form_field}
 
                         <div class="form-group">
-                            <button type="submit" name="save_mode" value="stay" class="form-submit-button btn btn-sm btn-default btn-success" title="{intl l='Save changes' d='localpickup.bo.default'}">{intl l='Save changes' d='localpickup.bo.default'} <span class="glyphicon glyphicon-ok"></span></button>
+                            <a href="{url path="/admin/modules"}" class="btn btn-default" title="{intl l="Close" d='localpickup.bo.default'}">{intl l="Close" d='localpickup.bo.default'} <span class="glyphicon glyphicon-remove"></span></a>
+                            <button type="submit" class="btn btn-success" title="{intl l='Save changes' d='localpickup.bo.default'}">{intl l='Save changes' d='localpickup.bo.default'} <span class="glyphicon glyphicon-ok"></span></button>
                         </div>
                     {/form}
                 </form>

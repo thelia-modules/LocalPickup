@@ -43,35 +43,26 @@ et enregistrez.
 
 ### Boucles
 
-1.  address.local
+1.  `address.local`
+    Même sorties que la boucle `address`, mais avec l'adresse du magasin au lieu de celle du client.
     - Arguments:
         1. id | obligatoire | id de l'adresse du client
     - Sorties:
         Les mêmes variables que la boucle address, mais l'adresse donnée est celle du magasin.
     - Utilisation:
-        ```{loop type="address.local" name="yourloopname" id="1"}
+        ```
+        {loop type="address.local" name="yourloopname" id="1"}
             <!-- your template -->
-        {/loop}```
-2.  localpickupid
-    - Arguments: pas d'arguments
-    -Sorties:
-        1. \$MODULE_ID : id du module retrait sur place
-    -Utilisation:
-        ```{loop type="localpickupid" name="yourloopname"}
-        {$MODULE_ID}
         {/loop}```
 
 ### Intégration
-Pour intégrer ce module, seule la page "order-invoice" est à modifier.
-En effet, deux boucles sont disponibles: localpickupid et address.local
-Le but de la modification est de vérifier si le module utilisé pour la livraison est le retrait sur place
-en comparant les ids, et si tel est le cas, utiliser la boucle address.local au lieu de address pour afficher l'address du magasin
 
+L'integration utilise les hooks et ne nécessite pas de travaux particuliers.
 
 en_US
 -----
 
-### Install notes
+### Installation notes
 
 #### Manually
 
@@ -86,33 +77,25 @@ Add it in your main thelia composer.json file:
 composer require thelia/local-pickup-module:~1.0
 ```
 
-### How to use
+### Usage
 
 To use the module, you first need to activate it in the back-office, tab Modules, and click on "Configure" on the line
 of the module. Enter the price you want for local pickup and save.
 
 ### Loops
-1.  address.local
+1.  `address.local`
+    Same output as the `address` loop, with the store adresse instead of the customer address. 
     - Arguments:
         1. id | mandatory | id of the customer's address
     - Output:
         The same variables as address loop, but the given address is the store's address.
     - Usage:
-        ```{loop type="address.local" name="yourloopname" id="1"}
+        ```
+        {loop type="address.local" name="yourloopname" id="1"}
             <!-- your template -->
-        {/loop}```
-2.  localpickupid
-    - Arguments: no args
-    -Output:
-        1. \$MODULE_ID : id of LocalPickup module
-    -Usage:
-        ```{loop type="localpickupid" name="yourloopname"}
-        {$MODULE_ID}
-        {/loop}```
-
+        {/loop}
+        ```
 
 ### Integration
-This module only requires to edit "order-invoice".
-To do the job, you have two loops: localpickupid and address.local
-The goal is to check if the order's delivery module is local pickup by comparing the ids,
-and if the module is local pickup, use the loop address.local instead of address to show the store's address.
+
+The modules uses hooks, and does not require specific work.

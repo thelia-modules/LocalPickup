@@ -12,12 +12,11 @@
 
 namespace LocalPickup\Controller;
 
-use LocalPickup\Model\LocalPickupShipping;
+use LocalPickup\LocalPickup;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
-use Thelia\Core\Translation\Translator;
 use Thelia\Tools\URL;
 
 /**
@@ -42,38 +41,20 @@ class SetDeliveryPrice extends BaseAdminController
 
             $price = $vform->get('price')->getData();
 
-            if (preg_match("#^\d\.?\d*$#",$price)) {
-                $newprice = new LocalPickupShipping();
-                $newprice->setPrice((float) $price)
-                    ->save();
-            } else {
-                $errmes = Translator::getInstance()->trans("price must be a number !");
-            }
-
-            return $this->redirectToConfigurationPage();
-
-        } catch (\Exception $e) {
-            $errmes = $this->createStandardFormValidationErrorMessage($e);
+            LocalPickup::setConfigValue(LocalPickup::PRICE_VAR_NAME, floatval($price));
+        } catch (\Exception $ex) {
+            $errmes = $this->createStandardFormValidationErrorMessage($ex);
         }
 
         if (null !== $errmes) {
             $this->setupFormErrorContext(
                 'configuration',
                 $errmes,
-                $form
+                $form,
+                $ex
             );
-
-            $response = $this->render("module-configure", ['module_code' => 'LocalPickup']);
         }
 
-        return $response;
-    }
-
-    /**
-     * Redirect to the configuration page
-     */
-    protected function redirectToConfigurationPage()
-    {
         return RedirectResponse::create(URL::getInstance()->absoluteUrl('/admin/module/LocalPickup'));
     }
 }

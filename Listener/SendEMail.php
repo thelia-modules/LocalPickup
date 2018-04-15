@@ -31,111 +31,62 @@ use Thelia\Model\MessageQuery;
  */
 class SendEMail extends BaseAction implements EventSubscriberInterface
 {
-
     /**
      * @var MailerFactory
      */
     protected $mailer;
-    /**
-     * @var ParserInterface
-     */
-    protected $parser;
 
-    public function __construct(ParserInterface $parser,MailerFactory $mailer)
+    public function __construct(MailerFactory $mailer)
     {
-        $this->parser = $parser;
         $this->mailer = $mailer;
     }
 
-    /**
-     * @return \Thelia\Mailer\MailerFactory
-     */
-    public function getMailer()
-    {
-        return $this->mailer;
-    }
-
     /*
-     * @params OrderEvent $order
-     * Checks if order delivery module is icirelais and if order new status is sent, send an email to the customer.
+     * Send a mail to the customer qhen the order is set to the Sent Status.
+     *
+     * @param OrderEvent $event
+     * @throws \Propel\Runtime\Exception\PropelException
      */
-    public function update_status(OrderEvent $event)
+    public function updateStatus(OrderEvent $event)
     {
-        if ($event->getOrder()->getDeliveryModuleId() === LocalPickup::getModCode()) {
-
+        if ($event->getOrder()->getDeliveryModuleId() === LocalPickup::getModuleId()) {
             if ($event->getOrder()->isSent()) {
-                $contact_email = ConfigQuery::read('store_email');
+                $order = $event->getOrder();
+                $customer = $order->getCustomer();
+                $store = ConfigQuery::create();
 
-                if ($contact_email) {
-                    $message = MessageQuery::create()
-                        ->filterByName('order_confirmation_localpickup')
-                        ->findOne();
-
-                    if (false === $message) {
-                        throw new \Exception("Failed to load message 'order_confirmation_localpickup'.");
-                    }
-
-                    $order = $event->getOrder();
-                    $customer = $order->getCustomer();
-                    $store = ConfigQuery::create();
-
-                    $country = CountryQuery::create()->findPk($store->read("store_country"));
-                    $country = CountryI18nQuery::create()->filterById($country->getId())->findOneByLocale($order->getLang()->getLocale())->getTitle();
-
-                    $this->parser->assign('order_id', $order->getId());
-                    $this->parser->assign('order_ref', $order->getRef());
-                    $this->parser->assign('store_name', $store->read("store_name"));
-                    $this->parser->assign('store_address1', $store->read("store_address1"));
-                    $this->parser->assign('store_address2', $store->read("store_address2"));
-                    $this->parser->assign('store_address3', $store->read("store_address3"));
-                    $this->parser->assign('store_zipcode', $store->read("store_zipcode"));
-                    $this->parser->assign('store_city', $store->read("store_city"));
-                    $this->parser->assign('store_country', $country);
-
-                    $message
-                        ->setLocale($order->getLang()->getLocale());
-
-                    $instance = \Swift_Message::newInstance()
-                        ->addTo($customer->getEmail(), $customer->getFirstname()." ".$customer->getLastname())
-                        ->addFrom($contact_email, ConfigQuery::read('store_name'))
-                    ;
-
-                    // Build subject and body
-                    $message->buildMessage($this->parser, $instance);
-
-                    $this->getMailer()->send($instance);
-
+                if (null !== $country = CountryQuery::create()->findPk($store->read("store_country"))) {
+                    $countryName = $country->setLocale($order->getLang()->getLocale())->getTitle();
+                } else {
+                    $countryName = '';
                 }
+
+                $this->mailer->sendEmailToCustomer(
+                    'order_confirmation_localpickup',
+                    $customer,
+                    [
+                        'order_id'  => $order->getId(),
+                        'order_ref' => $order->getRef(),
+                        'store_name'     => ConfigQuery::read("store_name"),
+                        'store_address1' => ConfigQuery::read("store_address1"),
+                        'store_address2' => ConfigQuery::read("store_address2"),
+                        'store_address3' => ConfigQuery::read("store_address3"),
+                        'store_zipcode'  => ConfigQuery::read("store_zipcode"),
+                        'store_city'     => ConfigQuery::read("store_city"),
+                        'store_country'  => $countryName
+                    ]
+                );
             }
         }
-
     }
 
     /**
-     * Returns an array of event names this subscriber wants to listen to.
-     *
-     * The array keys are event names and the value can be:
-     *
-     *  * The method name to call (priority defaults to 0)
-     *  * An array composed of the method name to call and the priority
-     *  * An array of arrays composed of the method names to call and respective
-     *    priorities, or 0 if unset
-     *
-     * For instance:
-     *
-     *  * array('eventName' => 'methodName')
-     *  * array('eventName' => array('methodName', $priority))
-     *  * array('eventName' => array(array('methodName1', $priority), array('methodName2'))
-     *
-     * @return array The event names to listen to
-     *
-     * @api
+     * @inheritdoc
      */
     public static function getSubscribedEvents()
     {
         return array(
-            TheliaEvents::ORDER_UPDATE_STATUS => array("update_status", 128)
+            TheliaEvents::ORDER_UPDATE_STATUS => array("updateStatus", 128)
         );
     }
-
 }

@@ -44,7 +44,7 @@ class LocalPickup extends AbstractDeliveryModule
      */
     public function getPostage(Country $country)
     {
-        return floatval(LocalPickup::getConfigValue(self::PRICE_VAR_NAME, 0));
+        return (float)LocalPickup::getConfigValue(self::PRICE_VAR_NAME, 0);
     }
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
@@ -56,11 +56,11 @@ class LocalPickup extends AbstractDeliveryModule
             try {
                 $statement = $db->execute("select price from local_pickup_shipping order by id desc limit 1");
 
-                $price = floatval($statement->fetchColumn(0));
+                $price = (float)$statement->fetchColumn(0);
 
                 LocalPickup::setConfigValue(self::PRICE_VAR_NAME, $price);
             } catch (\Exception $ex) {
-                //LocalPickup::setConfigValue(self::PRICE_VAR_NAME, 0);
+                // Nothing special
             }
         }
     }

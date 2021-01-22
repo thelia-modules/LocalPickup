@@ -20,13 +20,10 @@
     </hooks>
 
     <services>
-        <service id="send.localpickup.mail" class="LocalPickup\Listener\SendEMail" scope="request">
-            <argument type="service" id="mailer"/>
-            <tag name="kernel.event_subscriber"/>
-        </service>
         <service id="update.localpickup.delivery.address" class="LocalPickup\Listener\UpdateDeliveryAddress">
             <tag name="kernel.event_subscriber" />
         </service>
+
         <service id="api.localpickup" class="LocalPickup\EventListeners\APIListener">
             <argument type="service" id="service_container"/>
             <argument type="service" id="request_stack"/>

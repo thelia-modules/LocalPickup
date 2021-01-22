@@ -1,0 +1,207 @@
+{extends file="email-layout.tpl"}
+
+{* Do not provide a "Open in browser" link  *}
+{block name="browser"}{/block}
+{* No pre-header *}
+{block name="pre-header"}{/block}
+
+{* Subject  *}
+{block name="email-subject"}{intl l="Your order confirmation Nº %ref" ref={$order_ref}}{/block}
+
+
+{* Content  *}
+{block name="email-content"}
+
+    {loop name="order.invoice" type="order" id=$order_id customer="*"}
+        {loop name="currency.order" type="currency" id=$CURRENCY}
+            {assign "orderCurrencySymbol" $SYMBOL}
+            {assign var="orderCurrencyIsoCode" value=$ISOCODE}
+        {/loop}
+
+        {loop type="customer" name="customer.invoice" id=$CUSTOMER current="0"}
+            {assign var="customerRef" value=$REF}
+
+            <p>{if {$TITLE} == 9}{intl l="Dear Mr. "}
+                {else}{intl l="Dear Ms. "}
+                {/if}
+                {$FIRSTNAME} {$LASTNAME},
+            </p>
+
+        {/loop}
+
+        <p><strong>{intl l="Order details"}</strong></p>
+       <p>
+            {intl l="Order Number:"} {$REF}<br />
+            {intl l="Paid With:"} {loop name="payment-module" type="module" id=$PAYMENT_MODULE}{$TITLE}{/loop}<br />
+            {intl l="Purchase Date:"} {format_date date=$CREATE_DATE output="datetime"}<br />
+            {intl l="Delivery method:"} {loop name="delivery-module" type="module" id=$DELIVERY_MODULE}{$TITLE}{/loop}<br />
+        </p>
+
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top" width="55%">
+                    <strong>{intl l="Delivery address:"}</strong><br>
+                    {loop type="order_address" name="delivery_address" id=$DELIVERY_ADDRESS}
+                    {$FIRSTNAME} {$LASTNAME}<br />
+                    {if ! empty($COMPANY)}
+                    {$COMPANY}<br />
+                    {/if}
+                    {$ADDRESS1}<br>
+                    {if $ADDRESS2 != ""}{$ADDRESS2}<br />{/if}
+                    {if $ADDRESS3 != ""}{$ADDRESS3}<br />{/if}
+                    {$ZIPCODE} {$CITY}<br />
+                    {loop type="country" name="country_delivery" id=$COUNTRY}{$TITLE}{/loop}<br />
+                    {/loop}
+                </td>
+                <td valign="top">
+                    <strong>{intl l="Billing address:"}</strong><br />
+                    {loop type="order_address" name="invoice_address" id=$INVOICE_ADDRESS}
+                    {$FIRSTNAME} {$LASTNAME}<br />
+                    {if ! empty($COMPANY)}
+                    {$COMPANY}<br />
+                    {/if}
+                    {$ADDRESS1}<br>
+                    {if $ADDRESS2 != ""}{$ADDRESS2}<br />{/if}
+                    {if $ADDRESS3 != ""}{$ADDRESS3}<br />{/if}
+                    {$ZIPCODE} {$CITY}<br />
+                    {loop type="country" name="country_delivery" id=$COUNTRY}{$TITLE}{/loop}<br />
+                    {/loop}
+                </td>
+            </tr>
+        </table>
+
+        <br />
+
+
+        <table width="100%" border="0" cellpadding="0" cellspacing="0" style="font-size:13px;line-height:2em">
+            <tr style="color:#999;font-size:11px">
+                <td style="color:#999;border-bottom:1px solid #000"></td>
+                <td align="right" style="color:#999;border-bottom:1px solid #000">{intl l="Price in"} {$orderCurrencyIsoCode}</td>
+            </tr>
+            {loop type="order_product" name="order-products" order=$ID}
+            {if $WAS_IN_PROMO == 1}
+                {assign "realPrice" $PROMO_PRICE}
+                {assign "realTax" $PROMO_PRICE_TAX}
+                {assign "realTaxedPrice" $TAXED_PROMO_PRICE}
+            {else}
+                {assign "realPrice" $PRICE}
+                {assign "realTax" $PRICE_TAX}
+                {assign "realTaxedPrice" $TAXED_PRICE}
+            {/if}
+                <tr>
+                    <td style="border-bottom:1px solid #000">
+                        <p>{$TITLE}
+
+                    	{loop type="product" name="product" ref=$REF}
+	                        {loop type="champsoustitreproduit.soustitre" name="soustitreproduit" product_id=$ID}
+	                         - {$SOUSTITRE}
+	                        {/loop}
+                        {/loop}
+
+                        {ifloop rel="combinations"}
+                        {loop type="order_product_attribute_combination" name="combinations" order_product=$ID}
+                            <br/>- {$ATTRIBUTE_TITLE} - {$ATTRIBUTE_AVAILABILITY_TITLE}
+                        {/loop}
+                        {/ifloop}
+
+                        {ifloop rel="gravures"}
+                            {loop type="marquage.orderproduct" name="gravures" order_product_id=$ID}
+                                {loop type="marquage.police" name="police" id=$POLICE}
+                                    {$nomPolice = $NOM}
+                                {/loop}
+                                <br/>{intl l='Gravure '}:
+                                    <br/>- {intl l='Police de caractère : %nom' nom=$nomPolice}
+                                    <br/>- {intl l='Position : %position' position=$POSITION}
+                                    <br/>- {intl l='Style : %type' type=$TYPE}
+                                    <br/>- {intl l='Votre texte : "%texte"' texte=$TEXTE}</p>
+                            {/loop}
+                        {/ifloop}
+                        </p>
+                    </td>
+                    <td align="right" style="border-bottom:1px solid #000">
+                        {$QUANTITY} x {format_money number=$realTaxedPrice symbol=$orderCurrencySymbol}
+                    </td>
+                </tr>
+            {/loop}
+            {loop type="mfk.selection.order" name="cadeaux_et_message_1" order_id=$order_id}
+            {if ! empty($ECHANTILLON_1) || ! empty($ECHANTILLON_2)}
+                <tr>
+                    <td style="border-bottom:1px solid #000">{intl l="Echantillons offerts "}: {$ECHANTILLON_1}, {$ECHANTILLON_2}
+                    </strong></td>
+                    <td align="right" style="border-bottom:1px solid #000">
+                        1 x 0,00 €
+                </tr>
+            {/if}
+
+            {if ! empty($CADEAU)}
+                 <tr>
+                    <td style="border-bottom:1px solid #000">{intl l="Votre cadeau "}: {$CADEAU}
+                    </strong></td>
+                    <td align="right" style="border-bottom:1px solid #000">
+                        1 x 0,00 €
+                </tr>
+            {/if}
+
+         {/loop}
+
+        {if $DISCOUNT}
+                    <tr>
+                        <td align="right" style="text-align:right">{intl l="Discount"}</td>
+                        <td align="right" style="text-align:right">- {format_money number=$DISCOUNT symbol=$orderCurrencySymbol}</td>
+                    </tr>
+         {/if}
+
+
+
+            <tr>
+                <td align="right" style="text-align:right">{intl l="Total"}</td>
+                <td align="right" style="text-align:right">{format_money number={$TOTAL_TAXED_AMOUNT - $POSTAGE} symbol=$orderCurrencySymbol} </td>
+            </tr>
+            <tr>
+                <td align="right" style="text-align:right">{intl l="Shipping:"}</td>
+                <td align="right" style="text-align:right">{format_money number=$POSTAGE symbol=$orderCurrencySymbol}</td>
+            </tr>
+            <tr>
+                <td align="right" style="text-align:right"><strong>{intl l="Order Total"}</strong></td>
+                <td align="right" style="text-align:right"><strong>{format_money number=$TOTAL_TAXED_AMOUNT symbol=$orderCurrencySymbol}</strong></td>
+            </tr>
+
+
+
+
+
+
+        </table>
+
+        <br />
+
+        {loop type="mfk.selection.order" name="cadeaux_et_message" order_id=$order_id}
+             {if ! empty($MESSAGE)}
+                <p><strong>{intl l="Message cadeau"}</strong>
+                    <br>
+                    {$MESSAGE|nl2br nofilter}
+                </p>
+            {/if}
+        {/loop}
+
+        <br />
+
+        {loop type="is_express_checkout_customer" name="no-account" customer_id=$CUSTOMER}{/loop}
+        {elseloop rel="no-account"}
+
+               <p>{intl l='You can follow your order and download your invoice by connecting to your <a href="%url"> customer account</a> on www.franciskurkdjian.com.' url={url path="/account/"}}</p>
+
+
+        {/elseloop}
+    {/loop}
+
+
+    <p>{intl l="A customer care representative is available by phone at +33 (0)1 42 71 76 76, Tuesday to Saturday from 11 am to 2 pm and from 3 pm to 7:30 pm and Sunday from 12 am to 2 pm and 3 pm to 7 pm (Paris time) or by email by <a href='mailto:boutique@franciskurkdjian.com'>clicking here</a>."}</p>
+
+    <p>{intl l="COVID19-Thank you for your shopping with us and hope to see you soon on www.franciskurkdjian.com"}</p>
+
+    <p>
+        <!-- {intl l="Your on-line store Manager"}<br/> -->
+        {intl l="Maison Francis Kurkdjian"}
+    </p>
+{/block}

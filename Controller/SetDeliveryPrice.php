@@ -23,7 +23,6 @@ use Thelia\Tools\URL;
  * Class SetDeliveryPrice
  * @package LocalPickup\Controller
  * @author Thelia <info@thelia.net>
- * @contributor Thomas Arnaud <tarnaud@openstudio.fr>
  */
 class SetDeliveryPrice extends BaseAdminController
 {

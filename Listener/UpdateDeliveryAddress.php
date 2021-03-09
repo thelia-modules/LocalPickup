@@ -78,7 +78,7 @@ class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterfa
                     );
 
                     $address_event->setOrderAddress($address);
-
+                    $address_event->setOrder($event->getOrder());
                     $dispatcher->dispatch(TheliaEvents::ORDER_UPDATE_ADDRESS, $address_event);
                 }
             } else {

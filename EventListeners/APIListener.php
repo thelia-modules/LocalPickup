@@ -10,28 +10,12 @@ use OpenApi\Model\Api\ModelFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Thelia\Core\HttpFoundation\Session\Session;
 use Thelia\Model\ModuleQuery;
 
 class APIListener implements EventSubscriberInterface
 {
-    /** @var ContainerInterface  */
-    protected $container;
-   
-    /** @var RequestStack  */
-    protected $requestStack;
-
-    /**
-     * APIListener constructor.
-     * @param ContainerInterface $container We need the container because we use a service from another module
-     * which is not mandatory, and using its service without it being installed will crash
-     */
-    public function __construct(ContainerInterface $container, RequestStack $requestStack)
-    {
-        $this->container = $container;
-        $this->requestStack = $requestStack;
-    }
-
-    public function getDeliveryModuleOptions(DeliveryModuleOptionEvent $deliveryModuleOptionEvent)
+    public function getDeliveryModuleOptions(DeliveryModuleOptionEvent $deliveryModuleOptionEvent, Session $session, ModelFactory $modelFactory)
     {
         $module = ModuleQuery::create()->findOneByCode(LocalPickup::getModuleCode());
         if ($deliveryModuleOptionEvent->getModule()->getId() !== $module->getId()) {
@@ -48,14 +32,14 @@ class APIListener implements EventSubscriberInterface
         $images = $module->getModuleImages();
         $imageId = 0;
 
-        $title = $module->setLocale($this->requestStack->getCurrentRequest()->getSession()->getLang()->getLocale())->getTitle();
+        $title = $module->setLocale($session->getLang()->getLocale())->getTitle();
 
         if ($images->count() > 0) {
             $imageId = $images->getFirst()->getId();
         }
 
         /** @var DeliveryModuleOption $deliveryModuleOption */
-        $deliveryModuleOption = ($this->container->get('open_api.model.factory'))->buildModel('DeliveryModuleOption');
+        $deliveryModuleOption = $modelFactory->buildModel('DeliveryModuleOption');
         $deliveryModuleOption
             ->setCode(LocalPickup::getModuleCode())
             ->setValid($isValid)

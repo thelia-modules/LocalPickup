@@ -25,7 +25,7 @@ class APIListener implements EventSubscriberInterface
      * @param ContainerInterface $container We need the container because we use a service from another module
      * which is not mandatory, and using its service without it being installed will crash
      */
-    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack)
+    public function __construct(ModelFactory $modelFactory = null, RequestStack $requestStack)
     {
         $this->modelFactory = $modelFactory;
         $this->requestStack = $requestStack;

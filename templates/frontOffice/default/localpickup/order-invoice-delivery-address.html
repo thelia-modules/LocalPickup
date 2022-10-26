@@ -1,6 +1,6 @@
 <div class="panel panel-default col-sm-6">
     {loop type="address.local" name="local-delivery-address" id={order attr="delivery_address"}}
-        <div class="panel-heading">{intl l="Retrait en magasin"}</div>
+        <div class="panel-heading">{intl l="Retrait en magasin" d="localpickup.fo.default"}</div>
         <div class="panel-body">
             <span class="fn">{loop type="title" name="customer.title.info" id=$TITLE}{$SHORT}{/loop} {$LASTNAME|upper} {$FIRSTNAME|ucwords}</span>
             <span class="org">{$COMPANY}</span>

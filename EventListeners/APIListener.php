@@ -6,6 +6,7 @@ use LocalPickup\LocalPickup;
 use OpenApi\Events\DeliveryModuleOptionEvent;
 use OpenApi\Events\OpenApiEvents;
 use OpenApi\Model\Api\DeliveryModuleOption;
+use OpenApi\Model\Api\ModelFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -13,8 +14,8 @@ use Thelia\Model\ModuleQuery;
 
 class APIListener implements EventSubscriberInterface
 {
-    /** @var ContainerInterface  */
-    protected $container;
+    /** @var ModelFactory  */
+    protected $modelFactory;
 
     /** @var RequestStack  */
     protected $requestStack;
@@ -24,9 +25,9 @@ class APIListener implements EventSubscriberInterface
      * @param ContainerInterface $container We need the container because we use a service from another module
      * which is not mandatory, and using its service without it being installed will crash
      */
-    public function __construct(ContainerInterface $container, RequestStack $requestStack)
+    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack)
     {
-        $this->container = $container;
+        $this->modelFactory = $modelFactory;
         $this->requestStack = $requestStack;
     }
 
@@ -54,7 +55,7 @@ class APIListener implements EventSubscriberInterface
         }
 
         /** @var DeliveryModuleOption $deliveryModuleOption */
-        $deliveryModuleOption = ($this->container->get('open_api.model.factory'))->buildModel('DeliveryModuleOption');
+        $deliveryModuleOption = $this->modelFactory->buildModel('DeliveryModuleOption');
         $deliveryModuleOption
             ->setCode(LocalPickup::getModuleCode())
             ->setValid($isValid)

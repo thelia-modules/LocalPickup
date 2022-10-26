@@ -27,14 +27,15 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Thelia\Install\Database;
 use Thelia\Model\Country;
-use Thelia\Module\AbstractDeliveryModule;
+use Thelia\Model\State;
+use Thelia\Module\AbstractDeliveryModuleWithState;
 
 /**
  * Class LocalPickup
  * @package LocalPickup
  * @author Thelia <info@thelia.net>
  */
-class LocalPickup extends AbstractDeliveryModule
+class LocalPickup extends AbstractDeliveryModuleWithState
 {
     const DOMAIN_NAME = 'localpickup';
 
@@ -43,9 +44,9 @@ class LocalPickup extends AbstractDeliveryModule
     /**
      * @inheritdoc
      */
-    public function getPostage(Country $country)
+    public function getPostage(Country $country, State $state = null)
     {
-        return (float)LocalPickup::getConfigValue(self::PRICE_VAR_NAME, 0);
+        return $this->buildOrderPostage(LocalPickup::getConfigValue(self::PRICE_VAR_NAME, 0), $country, $this->getRequest()->getSession()->getLang()->getLocale());
     }
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
@@ -70,7 +71,7 @@ class LocalPickup extends AbstractDeliveryModule
     /**
      * @inheritdoc
      */
-    public function isValidDelivery(Country $country)
+    public function isValidDelivery(Country $country, State $state = null)
     {
         return true;
     }
@@ -78,7 +79,7 @@ class LocalPickup extends AbstractDeliveryModule
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
+            ->exclude([THELIA_MODULE_DIR . ucfirst(self::getModuleCode()). "/I18n/*"])
             ->autowire(true)
             ->autoconfigure(true);
     }

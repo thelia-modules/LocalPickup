@@ -33,7 +33,7 @@ class SetDeliveryPrice extends BaseAdminController
             return $response;
         }
 
-        $form = $this->createForm('localpickup.form');
+        $form = $this->createForm(\LocalPickup\Form\SetDeliveryPrice::getName());
         $errmes=null;
 
         try {

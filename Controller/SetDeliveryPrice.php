@@ -48,7 +48,7 @@ class SetDeliveryPrice extends BaseAdminController
             $errmes = $ex->getMessage();
         }
 
-        if (null !== $errmes) {
+        if (null !== $errmes && null !== $ex) {
             $this->setupFormErrorContext(
                 'configuration',
                 $errmes,
@@ -57,6 +57,6 @@ class SetDeliveryPrice extends BaseAdminController
             );
         }
 
-        return RedirectResponse::create(URL::getInstance()->absoluteUrl('/admin/module/LocalPickup'));
+        return new RedirectResponse(URL::getInstance()->absoluteUrl('/admin/module/LocalPickup'));
     }
 }

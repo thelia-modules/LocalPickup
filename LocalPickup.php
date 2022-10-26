@@ -24,6 +24,7 @@
 namespace LocalPickup;
 
 use Propel\Runtime\Connection\ConnectionInterface;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Thelia\Install\Database;
 use Thelia\Model\Country;
 use Thelia\Module\AbstractDeliveryModule;
@@ -47,7 +48,7 @@ class LocalPickup extends AbstractDeliveryModule
         return (float)LocalPickup::getConfigValue(self::PRICE_VAR_NAME, 0);
     }
 
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null)
+    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
         if ($newVersion === '1.2') {
             $db = new Database($con);
@@ -72,5 +73,13 @@ class LocalPickup extends AbstractDeliveryModule
     public function isValidDelivery(Country $country)
     {
         return true;
+    }
+
+    public static function configureServices(ServicesConfigurator $servicesConfigurator): void
+    {
+        $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
+            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
+            ->autowire(true)
+            ->autoconfigure(true);
     }
 }

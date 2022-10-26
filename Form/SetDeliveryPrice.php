@@ -14,6 +14,7 @@ namespace LocalPickup\Form;
 
 use LocalPickup\LocalPickup;
 use LocalPickup\Model\LocalPickupShippingQuery;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
@@ -30,7 +31,7 @@ class SetDeliveryPrice extends BaseForm
         $this->formBuilder
             ->add(
                 "price",
-                "number",
+                NumberType::class,
                 [
                     "label"=>Translator::getInstance()->trans("Price", [], LocalPickup::DOMAIN_NAME),
                     "label_attr"=> [
@@ -45,7 +46,7 @@ class SetDeliveryPrice extends BaseForm
     /**
      * @return string the name of you form. This name must be unique
      */
-    public function getName()
+    public static function getName()
     {
         return "set-delivery-price-localpickup";
     }

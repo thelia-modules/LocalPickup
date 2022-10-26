@@ -6,7 +6,6 @@ use LocalPickup\LocalPickup;
 use OpenApi\Events\DeliveryModuleOptionEvent;
 use OpenApi\Events\OpenApiEvents;
 use OpenApi\Model\Api\DeliveryModuleOption;
-use OpenApi\Model\Api\ModelFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -16,7 +15,7 @@ class APIListener implements EventSubscriberInterface
 {
     /** @var ContainerInterface  */
     protected $container;
-   
+
     /** @var RequestStack  */
     protected $requestStack;
 

@@ -29,7 +29,7 @@ class HookManager extends BaseHook
             $this->render(
                 "module_configuration.html",
                 [
-                    'price' => floatval(LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0))
+                    'price' => (float)LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0)
                 ]
             )
         );

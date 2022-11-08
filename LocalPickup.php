@@ -75,6 +75,11 @@ class LocalPickup extends AbstractDeliveryModuleWithState
     {
         return true;
     }
+    
+    public function getDeliveryMode()
+    {
+        return "localPickup";
+    }
 
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {

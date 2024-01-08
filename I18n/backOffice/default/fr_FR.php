@@ -2,6 +2,6 @@
 
 return array(
     'Close' => 'Fermer',
-    'Configure local pickup price' => 'Configurer le prix du retrait sur place',
+    'Configure local pickup' => 'Configurer le retrait sur place',
     'Save changes' => 'Enregistrer les modifications',
 );

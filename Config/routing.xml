@@ -4,6 +4,6 @@
         xsi:schemaLocation="http://symfony.com/schema/routing http://symfony.com/schema/routing/routing-1.0.xsd">
 
     <route id="localpickup.configure" path="/admin/module/localpickup/configure" methods="post">
-        <default key="_controller">LocalPickup\Controller\SetDeliveryPrice::configure</default>
+        <default key="_controller">LocalPickup\Controller\ConfigurationController::configure</default>
     </route>
 </routes>

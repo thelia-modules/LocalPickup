@@ -4,7 +4,7 @@
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
     <forms>
-        <form name="localpickup.form" class="LocalPickup\Form\SetDeliveryPrice" />
+        <form name="localpickup.form" class="LocalPickup\Form\ConfigurationForm" />
     </forms>
 
     <loops>

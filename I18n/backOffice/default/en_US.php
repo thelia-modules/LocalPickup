@@ -2,6 +2,6 @@
 
 return array(
     'Close' => 'Close',
-    'Configure local pickup price' => 'Configure local pickup price ',
+    'Configure local pickup' => 'Configure local pickup',
     'Save changes' => 'Save changes ',
 );

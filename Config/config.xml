@@ -14,8 +14,9 @@
     <hooks>
         <hook id="local.pickup.hook" class="LocalPickup\Hook\HookManager" scope="request">
             <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration" />
-            <tag name="hook.event_listener" event="order-invoice.delivery-address" type="front" method="onOrderInvoiceDeliveryAddress" />
-        </hook>
 
+            <tag name="hook.event_listener" event="order-invoice.delivery-address" type="front" method="onOrderInvoiceDeliveryAddress" />
+            <tag name="hook.event_listener" event="order-delivery.extra"  type="front" method="onOrderDeliveryExtra" />
+        </hook>
     </hooks>
 </config>

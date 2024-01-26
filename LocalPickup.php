@@ -40,7 +40,7 @@ class LocalPickup extends AbstractDeliveryModuleWithState
     const DOMAIN_NAME = 'localpickup';
 
     const PRICE_VAR_NAME = 'price';
-    const COMMENTARY_VAR_NAME = 'commentary';
+    const DESCRIPTION_VAR_NAME = 'description';
 
     /**
      * @inheritdoc
@@ -61,7 +61,7 @@ class LocalPickup extends AbstractDeliveryModuleWithState
 
                 $price = (float)$statement->fetchColumn(0);
 
-                LocalPickup::setConfigValue(self::PRICE_VAR_NAME, $price);
+                self::setConfigValue(self::PRICE_VAR_NAME, $price);
             } catch (\Exception $ex) {
                 // Nothing special
             }

@@ -1,14 +1,21 @@
 <?php
-/*************************************************************************************/
-/*      This file is part of the Thelia package.                                     */
-/*                                                                                   */
-/*      Copyright (c) OpenStudio                                                     */
-/*      email : dev@thelia.net                                                       */
-/*      web : http://www.thelia.net                                                  */
-/*                                                                                   */
-/*      For the full copyright and license information, please view the LICENSE.txt  */
-/*      file that was distributed with this source code.                             */
-/*************************************************************************************/
+
+/*
+ * This file is part of the Thelia package.
+ * http://www.thelia.net
+ *
+ * (c) OpenStudio <info@thelia.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+/*      Copyright (c) OpenStudio */
+/*      email : dev@thelia.net */
+/*      web : http://www.thelia.net */
+
+/*      For the full copyright and license information, please view the LICENSE.txt */
+/*      file that was distributed with this source code. */
 
 namespace LocalPickup\Controller;
 
@@ -22,29 +29,29 @@ use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 
 /**
- * Class ConfigurationController
- * @package LocalPickup\Controller
+ * Class ConfigurationController.
+ *
  * @author Thelia <info@thelia.net>
  */
 class ConfigurationController extends BaseAdminController
 {
     public function configure()
     {
-        if (null !== $response = $this->checkAuth(array(AdminResources::MODULE), array('LocalPickup'), AccessManager::UPDATE)) {
+        if (null !== $response = $this->checkAuth([AdminResources::MODULE], ['LocalPickup'], AccessManager::UPDATE)) {
             return $response;
         }
 
         $form = $this->createForm(ConfigurationForm::getName());
-        $errmes=null;
+        $errmes = $ex = null;
 
         try {
             $vform = $this->validateForm($form);
 
             $price = $vform->get('price')->getData();
-            $commentary = $vform->get('commentary')->getData();
+            $description = $vform->get('description')->getData();
 
-            LocalPickup::setConfigValue(LocalPickup::PRICE_VAR_NAME, (float)$price);
-            LocalPickup::setConfigValue(LocalPickup::COMMENTARY_VAR_NAME, $commentary, $this->getCurrentEditionLocale());
+            LocalPickup::setConfigValue(LocalPickup::PRICE_VAR_NAME, (float) $price);
+            LocalPickup::setConfigValue(LocalPickup::DESCRIPTION_VAR_NAME, $description, $this->getCurrentEditionLocale());
         } catch (FormValidationException $ex) {
             $errmes = $this->createStandardFormValidationErrorMessage($ex);
         } catch (\Exception $ex) {

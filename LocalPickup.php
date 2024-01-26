@@ -40,13 +40,14 @@ class LocalPickup extends AbstractDeliveryModuleWithState
     const DOMAIN_NAME = 'localpickup';
 
     const PRICE_VAR_NAME = 'price';
+    const DESCRIPTION_VAR_NAME = 'description';
 
     /**
      * @inheritdoc
      */
     public function getPostage(Country $country, State $state = null)
     {
-        return $this->buildOrderPostage(LocalPickup::getConfigValue(self::PRICE_VAR_NAME, 0), $country, $this->getRequest()->getSession()->getLang()->getLocale());
+        return $this->buildOrderPostage(self::getConfigValue(self::PRICE_VAR_NAME, 0), $country, $this->getRequest()->getSession()->getLang()->getLocale());
     }
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
@@ -60,7 +61,7 @@ class LocalPickup extends AbstractDeliveryModuleWithState
 
                 $price = (float)$statement->fetchColumn(0);
 
-                LocalPickup::setConfigValue(self::PRICE_VAR_NAME, $price);
+                self::setConfigValue(self::PRICE_VAR_NAME, $price);
             } catch (\Exception $ex) {
                 // Nothing special
             }

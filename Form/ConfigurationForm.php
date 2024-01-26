@@ -13,18 +13,19 @@
 namespace LocalPickup\Form;
 
 use LocalPickup\LocalPickup;
-use LocalPickup\Model\LocalPickupShippingQuery;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Thelia\Core\Translation\Translator;
 use Thelia\Form\BaseForm;
 
 /**
- * Class SetDeliveryPrice
+ * Class ConfigurationController
  * @package LocalPickup\Form
  */
-class SetDeliveryPrice extends BaseForm
+class ConfigurationForm extends BaseForm
 {
     protected function buildForm()
     {
@@ -33,11 +34,26 @@ class SetDeliveryPrice extends BaseForm
                 "price",
                 NumberType::class,
                 [
+                    "required" => false,
                     "label"=>Translator::getInstance()->trans("Price", [], LocalPickup::DOMAIN_NAME),
                     "label_attr"=> [
                         "for"=>"pricefield"
                     ],
                     "constraints"=> [ new NotBlank(), new GreaterThanOrEqual([ 'value' => 0 ]) ]
+                ]
+            )
+            ->add(
+                "description",
+                TextareaType::class,
+                [
+                    "required" => false,
+                    "label"=> Translator::getInstance()->trans("Commentary local pickup", [], LocalPickup::DOMAIN_NAME),
+                    'attr' => [
+                        'rows' => 5,
+                    ],
+                    "label_attr"=> [
+                        "for"=>"description"
+                    ],
                 ]
             )
         ;
@@ -48,7 +64,7 @@ class SetDeliveryPrice extends BaseForm
      */
     public static function getName()
     {
-        return "set-delivery-price-localpickup";
+        return "config-localpickup";
     }
 
 }

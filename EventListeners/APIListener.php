@@ -39,16 +39,25 @@ class APIListener implements EventSubscriberInterface
         }
 
         $isValid = true;
-        $postage = 0;
+        $locale = $this->requestStack->getCurrentRequest()->getSession()->getLang()->getLocale();
+
+        $postage = LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0);
+        $commentary = LocalPickup::getConfigValue(
+            LocalPickup::DESCRIPTION_VAR_NAME,
+            '',
+            $locale
+        );
+
         $postageTax = 0;
 
         $minimumDeliveryDate = '';
         $maximumDeliveryDate = '';
 
+
         $images = $module->getModuleImages();
         $imageId = 0;
 
-        $title = $module->setLocale($this->requestStack->getCurrentRequest()->getSession()->getLang()->getLocale())->getTitle();
+        $title = $module->setLocale($locale)->getTitle();
 
         if ($images->count() > 0) {
             $imageId = $images->getFirst()->getId();
@@ -57,6 +66,7 @@ class APIListener implements EventSubscriberInterface
         /** @var DeliveryModuleOption $deliveryModuleOption */
         $deliveryModuleOption = $this->modelFactory->buildModel('DeliveryModuleOption');
         $deliveryModuleOption
+            ->setDescription($commentary)
             ->setCode(LocalPickup::getModuleCode())
             ->setValid($isValid)
             ->setTitle($title)

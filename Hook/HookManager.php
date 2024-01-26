@@ -25,11 +25,14 @@ class HookManager extends BaseHook
 {
     public function onModuleConfiguration(HookRenderEvent $event)
     {
+        $locale = $this->getSession()->getAdminEditionLang()->getLocale();
+
         $event->add(
             $this->render(
                 "module_configuration.html",
                 [
-                    'price' => (float)LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0)
+                    'price' => (float)LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0),
+                    'description' => LocalPickup::getConfigValue(LocalPickup::DESCRIPTION_VAR_NAME, '', $locale)
                 ]
             )
         );

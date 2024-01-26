@@ -12,6 +12,7 @@
 
 namespace LocalPickup\Controller;
 
+use LocalPickup\Form\ConfigurationForm;
 use LocalPickup\LocalPickup;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Thelia\Controller\Admin\BaseAdminController;
@@ -21,11 +22,11 @@ use Thelia\Form\Exception\FormValidationException;
 use Thelia\Tools\URL;
 
 /**
- * Class SetDeliveryPrice
+ * Class ConfigurationController
  * @package LocalPickup\Controller
  * @author Thelia <info@thelia.net>
  */
-class SetDeliveryPrice extends BaseAdminController
+class ConfigurationController extends BaseAdminController
 {
     public function configure()
     {
@@ -33,15 +34,17 @@ class SetDeliveryPrice extends BaseAdminController
             return $response;
         }
 
-        $form = $this->createForm(\LocalPickup\Form\SetDeliveryPrice::getName());
+        $form = $this->createForm(ConfigurationForm::getName());
         $errmes=null;
 
         try {
             $vform = $this->validateForm($form);
 
             $price = $vform->get('price')->getData();
+            $description = $vform->get('description')->getData();
 
             LocalPickup::setConfigValue(LocalPickup::PRICE_VAR_NAME, (float)$price);
+            LocalPickup::setConfigValue(LocalPickup::DESCRIPTION_VAR_NAME, $description, $this->getCurrentEditionLocale());
         } catch (FormValidationException $ex) {
             $errmes = $this->createStandardFormValidationErrorMessage($ex);
         } catch (\Exception $ex) {

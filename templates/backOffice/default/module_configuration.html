@@ -1,34 +1,40 @@
+{if isset($smarty.get.errmes) and !empty($smarty.get.errmes)}
+    <div class="alert alert-danger">
+        {$smarty.get.errmes}
+    </div>
+{/if}
+
 <div class="general-block-decorator">
     <div class="row">
         <div class="col-md-12 title title-without-tabs">
-            {intl l='Configure local pickup price' d='localpickup.bo.default'}
+            {intl l='Configure local pickup' d='localpickup.bo.default'}
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="form-container">
                 <form method="POST" action="{url path="/admin/module/localpickup/configure"}">
                     {form name="localpickup.form"}
-                        {if isset($smarty.get.errmes) and !empty($smarty.get.errmes)}
-                            <div class="alert alert-danger">
-                                {$smarty.get.errmes}
-                            </div>
-                        {/if}
+
+                        {include
+                            file = "includes/inner-form-toolbar.html"
+                            hide_submit_buttons = false
+
+                            page_url  = {url path="/admin/module/LocalPickup"}
+                            close_url = {url path="/admin/modules"}
+                        }
 
                         {form_hidden_fields form=$form}
 
                         {custom_render_form_field field="price"}
                             <div class="input-group">
-                                <input type="text" {form_field_attributes field="price" value=$price}>
+                                <input type="text" {form_field_attributes field="price" value=$price|default:0}>
                                 <span class="input-group-addon">
                                     {currency attr="symbol"}
                                 </span>
                             </div>
                         {/custom_render_form_field}
 
-                        <div class="form-group">
-                            <a href="{url path="/admin/modules"}" class="btn btn-default" title="{intl l="Close" d='localpickup.bo.default'}">{intl l="Close" d='localpickup.bo.default'} <span class="glyphicon glyphicon-remove"></span></a>
-                            <button type="submit" class="btn btn-success" title="{intl l='Save changes' d='localpickup.bo.default'}">{intl l='Save changes' d='localpickup.bo.default'} <span class="glyphicon glyphicon-ok"></span></button>
-                        </div>
+                        {render_form_field field="description" extra_class="wysiwyg" value=$description}
                     {/form}
                 </form>
             </div>

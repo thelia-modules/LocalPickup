@@ -10,7 +10,7 @@
             {intl l='Configure local pickup' d='localpickup.bo.default'}
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="form-container">
                 <form method="POST" action="{url path="/admin/module/localpickup/configure"}">
                     {form name="localpickup.form"}
@@ -25,22 +25,22 @@
 
                         {form_hidden_fields form=$form}
 
-                        {custom_render_form_field field="price"}
-                            <div class="input-group">
-                                <input type="text" {form_field_attributes field="price" value=$price|default:0}>
-                                <span class="input-group-addon">
-                                    {currency attr="symbol"}
-                                </span>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {custom_render_form_field field="price"}
+                                    <div class="input-group">
+                                        <input type="text" {form_field_attributes field="price" value=$price|default:0}>
+                                        <span class="input-group-addon">
+                                            {currency attr="symbol"}
+                                        </span>
+                                    </div>
+                                {/custom_render_form_field}
                             </div>
-                        {/custom_render_form_field}
 
-
-
-                        {loop type="module-config" name="get-commentary" module="LocalPickup" variable="commentary" locale=$edit_language_locale}
-                            {custom_render_form_field field="commentary"}
-                                <textarea {form_field_attributes field="commentary"} rows="5" class="form-control wysiwyg">{$VALUE}</textarea>
-                            {/custom_render_form_field}
-                        {/loop}
+                            <div class="col-md-12">
+                                {render_form_field field="description" extra_class="wysiwyg" value=$description}
+                            </div>
+                        </div>
                     {/form}
                 </form>
             </div>

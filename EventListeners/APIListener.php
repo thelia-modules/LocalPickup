@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * This file is part of the Thelia package.
+ * http://www.thelia.net
+ *
+ * (c) OpenStudio <info@thelia.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace LocalPickup\EventListeners;
 
 use LocalPickup\LocalPickup;
@@ -14,16 +24,17 @@ use Thelia\Model\ModuleQuery;
 
 class APIListener implements EventSubscriberInterface
 {
-    /** @var ModelFactory  */
+    /** @var ModelFactory */
     protected $modelFactory;
 
-    /** @var RequestStack  */
+    /** @var RequestStack */
     protected $requestStack;
 
     /**
      * APIListener constructor.
+     *
      * @param ContainerInterface $container We need the container because we use a service from another module
-     * which is not mandatory, and using its service without it being installed will crash
+     *                                      which is not mandatory, and using its service without it being installed will crash
      */
     public function __construct(ModelFactory $modelFactory, RequestStack $requestStack)
     {
@@ -31,11 +42,11 @@ class APIListener implements EventSubscriberInterface
         $this->requestStack = $requestStack;
     }
 
-    public function getDeliveryModuleOptions(DeliveryModuleOptionEvent $deliveryModuleOptionEvent)
+    public function getDeliveryModuleOptions(DeliveryModuleOptionEvent $deliveryModuleOptionEvent): void
     {
         $module = ModuleQuery::create()->findOneByCode(LocalPickup::getModuleCode());
         if ($deliveryModuleOptionEvent->getModule()->getId() !== $module->getId()) {
-            return ;
+            return;
         }
 
         $isValid = true;
@@ -43,7 +54,7 @@ class APIListener implements EventSubscriberInterface
 
         $postage = LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0);
         $commentary = LocalPickup::getConfigValue(
-            LocalPickup::COMMENTARY_VAR_NAME,
+            LocalPickup::DESCRIPTION_VAR_NAME,
             '',
             $locale
         );
@@ -52,7 +63,6 @@ class APIListener implements EventSubscriberInterface
 
         $minimumDeliveryDate = '';
         $maximumDeliveryDate = '';
-
 
         $images = $module->getModuleImages();
         $imageId = 0;
@@ -66,7 +76,6 @@ class APIListener implements EventSubscriberInterface
         /** @var DeliveryModuleOption $deliveryModuleOption */
         $deliveryModuleOption = $this->modelFactory->buildModel('DeliveryModuleOption');
         $deliveryModuleOption
-            ->setDescription($commentary)
             ->setCode(LocalPickup::getModuleCode())
             ->setValid($isValid)
             ->setTitle($title)
@@ -78,6 +87,11 @@ class APIListener implements EventSubscriberInterface
             ->setPostageUntaxed($postage - $postageTax)
         ;
 
+        // Pre-5.3.x compatibility
+        if (method_exists($deliveryModuleOption, 'setDescription')) {
+            $deliveryModuleOption->setDescription($commentary);
+        }
+
         $deliveryModuleOptionEvent->appendDeliveryModuleOptions($deliveryModuleOption);
     }
 
@@ -85,9 +99,9 @@ class APIListener implements EventSubscriberInterface
     {
         $listenedEvents = [];
 
-        /** Check for old versions of Thelia where the events used by the API didn't exists */
+        /* Check for old versions of Thelia where the events used by the API didn't exists */
         if (class_exists(DeliveryModuleOptionEvent::class)) {
-            $listenedEvents[OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS] = array("getDeliveryModuleOptions", 129);
+            $listenedEvents[OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS] = ['getDeliveryModuleOptions', 129];
         }
 
         return $listenedEvents;

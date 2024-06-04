@@ -12,7 +12,6 @@
 
 namespace LocalPickup\EventListeners;
 
-use Billaudot\Billaudot;
 use LocalPickup\LocalPickup;
 use OpenApi\Events\DeliveryModuleOptionEvent;
 use OpenApi\Events\OpenApiEvents;

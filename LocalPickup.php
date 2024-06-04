@@ -27,6 +27,8 @@ use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Thelia\Install\Database;
 use Thelia\Model\Country;
+use Thelia\Model\Message;
+use Thelia\Model\MessageQuery;
 use Thelia\Model\State;
 use Thelia\Module\AbstractDeliveryModuleWithState;
 
@@ -41,6 +43,9 @@ class LocalPickup extends AbstractDeliveryModuleWithState
 
     const PRICE_VAR_NAME = 'price';
     const DESCRIPTION_VAR_NAME = 'description';
+    const EMAIL_VAR_NAME = 'email';
+
+    const EMAIL_CUSTOM_LOCAL_PICKUP = 'email_custom_local_pickup';
 
     /**
      * @inheritdoc
@@ -52,6 +57,28 @@ class LocalPickup extends AbstractDeliveryModuleWithState
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
     {
+        if (null === MessageQuery::create()->findOneByName(self::EMAIL_CUSTOM_LOCAL_PICKUP)) {
+            $message = new Message();
+            $message
+                ->setName(self::EMAIL_CUSTOM_LOCAL_PICKUP)
+                ->setHtmlTemplateFileName('order_confirmation_local_pickup.html')
+                ->setHtmlLayoutFileName('')
+                ->setTextTemplateFileName('order_confirmation_local_pickup.txt')
+                ->setTextLayoutFileName('')
+                ->setSecured(0)
+                ->setLocale('fr_FR')
+                ->setTitle('Confirmation de vote commande')
+                ->setSubject('Commande à récupérer en magasin')
+                ->setLocale('en_GB')
+                ->setTitle('Order confirmation')
+                ->setSubject('Order to pick up in store')
+                ->setLocale('de_DE')
+                ->setTitle('Bestellbestätigung')
+                ->setSubject('Bestellung im Geschäft abholen')
+                ->save()
+            ;
+        }
+
         if ($newVersion === '1.2') {
             $db = new Database($con);
 

@@ -56,6 +56,20 @@ class ConfigurationForm extends BaseForm
                     ],
                 ]
             )
+            ->add(
+                "email",
+                TextareaType::class,
+                [
+                    "required" => false,
+                    "label"=> Translator::getInstance()->trans("Commentary email", [], LocalPickup::DOMAIN_NAME),
+                    'attr' => [
+                        'rows' => 5,
+                    ],
+                    "label_attr"=> [
+                        "for"=>"description"
+                    ],
+                ]
+            )
         ;
     }
 

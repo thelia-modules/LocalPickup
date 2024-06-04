@@ -49,9 +49,11 @@ class ConfigurationController extends BaseAdminController
 
             $price = $vform->get('price')->getData();
             $description = $vform->get('description')->getData();
+            $email = $vform->get('email')->getData();
 
             LocalPickup::setConfigValue(LocalPickup::PRICE_VAR_NAME, (float) $price);
             LocalPickup::setConfigValue(LocalPickup::DESCRIPTION_VAR_NAME, $description, $this->getCurrentEditionLocale());
+            LocalPickup::setConfigValue(LocalPickup::EMAIL_VAR_NAME, $email, $this->getCurrentEditionLocale());
         } catch (FormValidationException $ex) {
             $errmes = $this->createStandardFormValidationErrorMessage($ex);
         } catch (\Exception $ex) {

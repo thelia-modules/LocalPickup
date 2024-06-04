@@ -17,10 +17,15 @@ use OpenApi\Events\DeliveryModuleOptionEvent;
 use OpenApi\Events\OpenApiEvents;
 use OpenApi\Model\Api\DeliveryModuleOption;
 use OpenApi\Model\Api\ModelFactory;
+use Propel\Runtime\Exception\PropelException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Thelia\Core\Event\TheliaEvents;
+use Thelia\Core\Event\Order\OrderEvent;
+use Thelia\Mailer\MailerFactory;
 use Thelia\Model\ModuleQuery;
+use Thelia\Model\OrderStatus;
 
 class APIListener implements EventSubscriberInterface
 {
@@ -31,16 +36,23 @@ class APIListener implements EventSubscriberInterface
     protected $requestStack;
 
     /**
+     * @var MailerFactory
+     */
+    protected $mailer;
+
+    /**
      * APIListener constructor.
      *
      * @param ContainerInterface $container We need the container because we use a service from another module
      *                                      which is not mandatory, and using its service without it being installed will crash
      */
-    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack)
+    public function __construct(ModelFactory $modelFactory, RequestStack $requestStack, MailerFactory $mailer)
     {
         $this->modelFactory = $modelFactory;
         $this->requestStack = $requestStack;
+        $this->mailer = $mailer;
     }
+
 
     public function getDeliveryModuleOptions(DeliveryModuleOptionEvent $deliveryModuleOptionEvent): void
     {
@@ -95,6 +107,28 @@ class APIListener implements EventSubscriberInterface
         $deliveryModuleOptionEvent->appendDeliveryModuleOptions($deliveryModuleOption);
     }
 
+    /**
+     * @throws PropelException
+     */
+    public function getOrderStatus(OrderEvent $orderEvent)
+    {
+        $order = $orderEvent->getOrder();
+
+        if ($order->getDeliveryModuleId() !== LocalPickup::getModuleId() || $order->getOrderStatus()->getCode() !== OrderStatus::CODE_SENT) {
+            return;
+        }
+
+        $this->mailer->sendEmailToCustomer(
+            LocalPickup::EMAIL_CUSTOM_LOCAL_PICKUP,
+            $order->getCustomer(),
+            [
+                'order_id' => $order->getId(),
+                'order_ref' => $order->getRef(),
+                'comment' => LocalPickup::getConfigValue(LocalPickup::EMAIL_VAR_NAME, '', $order->getLang()->getLocale()),
+            ]
+        );
+    }
+
     public static function getSubscribedEvents()
     {
         $listenedEvents = [];
@@ -103,6 +137,8 @@ class APIListener implements EventSubscriberInterface
         if (class_exists(DeliveryModuleOptionEvent::class)) {
             $listenedEvents[OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS] = ['getDeliveryModuleOptions', 129];
         }
+
+        $listenedEvents[TheliaEvents::ORDER_UPDATE_STATUS] = ['getOrderStatus', 99];
 
         return $listenedEvents;
     }

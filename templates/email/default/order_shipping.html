@@ -1,0 +1,52 @@
+{extends file="email-layout.tpl"}
+
+{* Do not provide a "Open in browser" link  *}
+{block name="browser"}{/block}
+{* No pre-header *}
+{block name="pre-header"}{/block}
+
+{* Subject  *}
+{block name="email-subject"}{intl l="Your order confirmation Nº %ref" ref={$order_ref}}{/block}
+
+{* Title  *}
+{block name="email-title"}
+    {default_translation_domain domain='localpickup.email.default'}
+    {intl l="Your order is available in store"}
+{/block}
+
+{* Content  *}
+{block name="email-content"}
+    {default_translation_domain domain='localpickup.email.default'}
+
+    <p>{intl l="Come pick up your order at the store"}</p>
+
+    <br>
+
+    {loop name="order.invoice" type="order" id=$order_id customer="*"}
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top" width="55%">
+                    <strong style="color: #322588">{intl l="Delivery address"}:</strong><br>
+                    {ifhook rel="email-html.order-confirmation.delivery-address"}
+                        {* delivery module can customize the delivery address *}
+                        {hook name="email-html.order-confirmation.delivery-address" module={$DELIVERY_MODULE} order=$order_id}
+                    {/ifhook}
+                    {elsehook rel="email-html.order-confirmation.delivery-address"}
+                        {format_address order_address=$DELIVERY_ADDRESS locale=$locale}
+                    {/elsehook}
+                </td>
+                <td valign="top" width="45%">
+                    <strong style="color: #322588">{intl l="Instructions"}:</strong><br>
+                    {$comment nofilter}
+                </td>
+            </tr>
+        </table>
+
+        <br/>
+        <br />
+
+        {intl l="Thanks"}<br />
+        {intl l="The %store team." store={config key="store_name"}}
+    {/loop}
+{/block}
+

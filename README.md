@@ -59,6 +59,34 @@ et enregistrez.
 
 L'integration utilise les hooks et ne nécessite pas de travaux particuliers.
 
+## Envoi de SMS
+
+Ce module utilise le composant symfony/notifier. Lors de l'installation du module, un fichier notifier.yaml sera ajouté 
+dans votre configuration avec une configuration par défaut.
+
+Si vous ne souhaitez pas envoyer de SMS avec ce module, il vous suffit de configurer le fichier notifier.yaml pour ne pas utiliser de texter:
+
+
+    framework:
+        notifier:
+            texter_transports:
+
+Vous pouvez spécifier un canal SMS particulier pour votre notifier (https://symfony.com/doc/current/notifier.html#sms-channel
+) et mettre à jour votre configuration.
+
+Par exemple, si vous utilisez Brevo :
+
+    framework:
+    notifier:
+        texter_transports:
+            brevo: '%env(BREVO_DSN)%'
+
+Ensuite, mettez à jour votre fichier .env avec votre clé API :
+
+    ###> symfony/brevo-notifier ###
+    BREVO_DSN=brevo://API_KEY@default?sender=SENDER
+    ###< symfony/brevo-notifier ###
+
 en_US
 -----
 
@@ -99,3 +127,31 @@ of the module. Enter the price you want for local pickup and save.
 ### Integration
 
 The modules uses hooks, and does not require specific work.
+
+## Sending SMS
+
+This module use the symfony/notifier component. 
+When requiring the module, it will add a notifier.yaml file in your config with a default config. 
+
+If you do not wish to send SMS with this module, just configure the `notifier.yaml` file to not use any texter:
+
+    framework:
+        notifier:
+            texter_transports:
+
+You can require a specific sms channel for your notifier (https://symfony.com/doc/current/notifier.html#sms-channel) and 
+then update your configuration. 
+For instance, if you use Brevo:
+
+    framework:
+    notifier:
+        texter_transports:
+            brevo: '%env(BREVO_DSN)%'
+
+And then update your .env file with your api key:
+
+    ###> symfony/brevo-notifier ###
+    BREVO_DSN=brevo://API_KEY@default?sender=SENDER
+    ###< symfony/brevo-notifier ###
+
+

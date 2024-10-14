@@ -53,16 +53,17 @@ class APIListener implements EventSubscriberInterface
      */
     protected $mailer;
 
+
     /**
      * APIListener constructor.
      */
     public function __construct(
-        ModelFactory                             $modelFactory,
-        RequestStack                             $requestStack,
-        MailerFactory                            $mailer,
-        private readonly ?TexterInterface        $texter,
-        private readonly ParserInterface         $parser,
-        private readonly TemplateHelperInterface $templateHelper
+        ModelFactory                    $modelFactory,
+        RequestStack                    $requestStack,
+        MailerFactory                   $mailer,
+        private ?TexterInterface        $texter,
+        private ParserInterface         $parser,
+        private TemplateHelperInterface $templateHelper
     )
     {
         $this->modelFactory = $modelFactory;
@@ -134,7 +135,7 @@ class APIListener implements EventSubscriberInterface
             return;
         }
         $this->sendLocalPickupEmail($order);
-        if ($this->texter) {
+        if ($this->texter && LocalPickup::getConfigValue(LocalPickup::SMS_VAR_NAME)) {
             $this->sendSmsIfNeeded($order);
         }
     }
@@ -235,7 +236,7 @@ class APIListener implements EventSubscriberInterface
         return $country ? $country->getIsoalpha2() : 'FR';
     }
 
-    public static function getSubscribedEvents(): array
+    public static function getSubscribedEvents()
     {
         $listenedEvents = [];
 

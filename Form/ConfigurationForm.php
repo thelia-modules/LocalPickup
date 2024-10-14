@@ -13,6 +13,7 @@
 namespace LocalPickup\Form;
 
 use LocalPickup\LocalPickup;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -67,6 +68,25 @@ class ConfigurationForm extends BaseForm
                     ],
                     "label_attr"=> [
                         "for"=>"description"
+                    ],
+                ]
+            )
+            ->add(
+                "sms",
+                CheckboxType::class,
+                [
+                    "required" => false,
+                    "label"=> Translator::getInstance()->trans("Send SMS", [], LocalPickup::DOMAIN_NAME),
+                    'attr' => [
+                        'rows' => 5,
+                    ],
+                    "label_attr"=> [
+                        "for"=>"sms",
+                        'help' => Translator::getInstance()->trans(
+                            'Help SMS',
+                            [],
+                            LocalPickup::DOMAIN_NAME
+                        ),
                     ],
                 ]
             )

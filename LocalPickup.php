@@ -49,6 +49,7 @@ class LocalPickup extends AbstractDeliveryModuleWithState
     public const PRICE_VAR_NAME = 'price';
     public const DESCRIPTION_VAR_NAME = 'description';
     public const EMAIL_VAR_NAME = 'email';
+    public const SMS_VAR_NAME = 'sms';
 
     public const EMAIL_CUSTOM_LOCAL_PICKUP = 'email_custom_local_pickup';
     public const SMS_CUSTOM_LOCAL_PICKUP = 'sms_custom_local_pickup';

@@ -41,6 +41,7 @@ class HookManager extends BaseHook
                     'price' => (float) LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0),
                     'description' => LocalPickup::getConfigValue(LocalPickup::DESCRIPTION_VAR_NAME, '', $locale),
                     'email' => LocalPickup::getConfigValue(LocalPickup::EMAIL_VAR_NAME, '', $locale),
+                    'sms' => LocalPickup::getConfigValue(LocalPickup::SMS_VAR_NAME, false),
                 ]
             )
         );

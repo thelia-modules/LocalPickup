@@ -33,6 +33,7 @@ use Thelia\Core\Event\TheliaEvents;
 use Thelia\Core\Template\ParserInterface;
 use Thelia\Core\Template\TemplateHelperInterface;
 use Thelia\Exception\TheliaProcessException;
+use Thelia\Log\Tlog;
 use Thelia\Mailer\MailerFactory;
 use Thelia\Model\CountryQuery;
 use Thelia\Model\MessageQuery;
@@ -67,10 +68,14 @@ class NotificationListener implements EventSubscriberInterface
             return;
         }
 
-        $this->sendLocalPickupEmail($order);
+        try {
+            $this->sendLocalPickupEmail($order);
 
-        if ($this->texter && LocalPickup::getConfigValue(LocalPickup::SMS_VAR_NAME)) {
-            $this->sendSmsIfNeeded($order);
+            if ($this->texter && LocalPickup::getConfigValue(LocalPickup::SMS_VAR_NAME)) {
+                $this->sendSmsIfNeeded($order);
+            }
+        } catch (\Exception $ex) {
+            Tlog::getInstance()->error("Failed to send notification : " . $ex->getMessage());
         }
     }
 

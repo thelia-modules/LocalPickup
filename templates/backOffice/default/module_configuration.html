@@ -46,6 +46,7 @@
                             </div>
                             <div class="col-md-12">
                                 {render_form_field field="sms" value=$sms}
+                                <p>{intl l='For SMS to work, please see <a target="_new" href="%url">%url</a> for required additional configuration' url='https://symfony.com/doc/current/notifier.html#sms-channel' d='localpickup.bo.default'}</p>
                             </div>
                         </div>
                     {/form}

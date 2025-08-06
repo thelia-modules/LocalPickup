@@ -34,6 +34,7 @@ use Thelia\Install\Database;
 use Thelia\Model\Country;
 use Thelia\Model\Message;
 use Thelia\Model\MessageQuery;
+use Thelia\Model\OrderPostage;
 use Thelia\Model\State;
 use Thelia\Module\AbstractDeliveryModuleWithState;
 
@@ -54,7 +55,7 @@ class LocalPickup extends AbstractDeliveryModuleWithState
     public const EMAIL_CUSTOM_LOCAL_PICKUP = 'email_custom_local_pickup';
     public const SMS_CUSTOM_LOCAL_PICKUP = 'sms_custom_local_pickup';
 
-    public function getPostage(Country $country, State $state = null)
+    public function getPostage(Country $country, State $state = null): OrderPostage|float
     {
         return $this->buildOrderPostage(self::getConfigValue(self::PRICE_VAR_NAME, 0), $country, $this->getRequest()->getSession()->getLang()->getLocale());
     }

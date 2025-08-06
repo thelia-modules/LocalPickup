@@ -109,12 +109,12 @@ class LocalPickup extends AbstractDeliveryModuleWithState
         }
     }
 
-    public function isValidDelivery(Country $country, State $state = null)
+    public function isValidDelivery(Country $country, State $state = null): bool
     {
         return true;
     }
 
-    public function getDeliveryMode()
+    public function getDeliveryMode(): string
     {
         return 'localPickup';
     }

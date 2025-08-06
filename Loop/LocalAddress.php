@@ -50,7 +50,7 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
     /**
      * {@inheritdoc}
      */
-    public function buildArray()
+    public function buildArray(): array
     {
         $id = $this->getId();
 
@@ -91,7 +91,7 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
     /**
      * {@inheritdoc}
      */
-    public function parseResults(LoopResult $loopResult)
+    public function parseResults(LoopResult $loopResult): LoopResult
     {
         $address = $loopResult->getResultDataCollection();
         $loopResultRow = new LoopResultRow($address);
@@ -123,7 +123,7 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
     /**
      * {@inheritdoc}
      */
-    protected function getArgDefinitions()
+    protected function getArgDefinitions(): ArgumentCollection
     {
         return new ArgumentCollection(
             Argument::createIntTypeArgument('id', null, true)

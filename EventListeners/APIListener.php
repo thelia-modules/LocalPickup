@@ -13,12 +13,11 @@
 namespace LocalPickup\EventListeners;
 
 use LocalPickup\LocalPickup;
-use OpenApi\Events\DeliveryModuleOptionEvent;
-use OpenApi\Events\OpenApiEvents;
-use OpenApi\Model\Api\DeliveryModuleOption;
-use OpenApi\Model\Api\ModelFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Thelia\Api\Bridge\Propel\Event\DeliveryModuleOptionEvent;
+use Thelia\Api\Resource\DeliveryModuleOption;
+use Thelia\Core\Event\TheliaEvents;
 use Thelia\Model\ModuleQuery;
 
 class APIListener implements EventSubscriberInterface
@@ -27,7 +26,6 @@ class APIListener implements EventSubscriberInterface
      * APIListener constructor.
      */
     public function __construct(
-        protected ModelFactory $modelFactory,
         protected RequestStack $requestStack
     ) {}
 
@@ -38,7 +36,6 @@ class APIListener implements EventSubscriberInterface
             return;
         }
 
-        $isValid = true;
         $locale = $this->requestStack->getCurrentRequest()?->getSession()->getLang()->getLocale();
 
         $postage = LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0);
@@ -62,18 +59,17 @@ class APIListener implements EventSubscriberInterface
             $imageId = $images->getFirst()?->getId();
         }
 
-        /** @var DeliveryModuleOption $deliveryModuleOption */
-        $deliveryModuleOption = $this->modelFactory->buildModel('DeliveryModuleOption');
+        $deliveryModuleOption = new DeliveryModuleOption();
         $deliveryModuleOption
             ->setCode(LocalPickup::getModuleCode())
-            ->setValid($isValid)
+            ->setValid(true)
             ->setTitle($title)
             ->setImage($imageId)
             ->setMinimumDeliveryDate($minimumDeliveryDate)
             ->setMaximumDeliveryDate($maximumDeliveryDate)
-            ->setPostage($postage)
+            ->setPostage($postage + $postageTax)
             ->setPostageTax($postageTax)
-            ->setPostageUntaxed($postage - $postageTax);
+            ->setPostageUntaxed($postage);
 
         // Pre-5.3.x compatibility
         if (method_exists($deliveryModuleOption, 'setDescription')) {
@@ -83,13 +79,13 @@ class APIListener implements EventSubscriberInterface
         $deliveryModuleOptionEvent->appendDeliveryModuleOptions($deliveryModuleOption);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         $listenedEvents = [];
 
         /* Check for old versions of Thelia where the events used by the API didn't exists */
         if (class_exists(DeliveryModuleOptionEvent::class)) {
-            $listenedEvents[OpenApiEvents::MODULE_DELIVERY_GET_OPTIONS] = ['getDeliveryModuleOptions', 129];
+            $listenedEvents[TheliaEvents::MODULE_DELIVERY_GET_OPTIONS] = ['getDeliveryModuleOptions', 129];
         }
 
         return $listenedEvents;

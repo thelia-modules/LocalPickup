@@ -55,7 +55,7 @@ class LocalPickup extends AbstractDeliveryModuleWithState
     public const EMAIL_CUSTOM_LOCAL_PICKUP = 'email_custom_local_pickup';
     public const SMS_CUSTOM_LOCAL_PICKUP = 'sms_custom_local_pickup';
 
-    public function getPostage(Country $country, State $state = null): OrderPostage|float
+    public function getPostage(Country $country, State $state = null): float|\Thelia\Model\OrderPostage
     {
         return $this->buildOrderPostage(self::getConfigValue(self::PRICE_VAR_NAME, 0), $country, $this->getRequest()->getSession()->getLang()->getLocale());
     }
@@ -122,7 +122,7 @@ class LocalPickup extends AbstractDeliveryModuleWithState
     public static function configureServices(ServicesConfigurator $servicesConfigurator): void
     {
         $servicesConfigurator->load(self::getModuleCode().'\\', __DIR__)
-            ->exclude([THELIA_MODULE_DIR.ucfirst(self::getModuleCode()).'/I18n/*'])
+            ->exclude([THELIA_MODULE_DIR . ucfirst(self::getModuleCode()). "/I18n/*"])
             ->autowire(true)
             ->autoconfigure(true);
     }

@@ -5,7 +5,7 @@
   "require": {
     "thelia/installer": "~1.1",
     "giggsey/libphonenumber-for-php": "^8.10",
-    "symfony/notifier": "6.4.*"
+    "symfony/notifier": "^6.4 || ^7.4"
   },
   "extra": {
     "installer-name": "LocalPickup"

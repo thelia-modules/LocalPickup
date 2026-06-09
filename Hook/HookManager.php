@@ -19,9 +19,13 @@
 
 namespace LocalPickup\Hook;
 
+use LocalPickup\Form\ConfigurationForm;
 use LocalPickup\LocalPickup;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Thelia\Core\Event\Hook\HookRenderEvent;
+use Thelia\Core\Form\TheliaFormFactory;
 use Thelia\Core\Hook\BaseHook;
+use Thelia\Core\Template\Parser\ParserResolver;
 
 /**
  * Class HookManager.
@@ -30,19 +34,46 @@ use Thelia\Core\Hook\BaseHook;
  */
 class HookManager extends BaseHook
 {
+    public function __construct(
+        private readonly TheliaFormFactory $formFactory,
+        ?EventDispatcherInterface $dispatcher = null,
+        ?ParserResolver $parserResolver = null,
+    ) {
+        parent::__construct($dispatcher, $parserResolver);
+    }
+
+    public static function getSubscribedHooks(): array
+    {
+        return [
+            'module.configuration' => [
+                ['type' => 'back', 'method' => 'onModuleConfiguration'],
+            ],
+            'order-invoice.delivery-address' => [
+                ['type' => 'front', 'method' => 'onOrderInvoiceDeliveryAddress'],
+            ],
+            'order-delivery.extra' => [
+                ['type' => 'front', 'method' => 'onOrderDeliveryExtra'],
+            ],
+        ];
+    }
+
     public function onModuleConfiguration(HookRenderEvent $event): void
     {
         $locale = $this->getSession()->getAdminEditionLang()->getLocale();
 
+        $form = $this->formFactory->createForm(ConfigurationForm::getName(), data: [
+            'price' => (float) LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0),
+            'description' => LocalPickup::getConfigValue(LocalPickup::DESCRIPTION_VAR_NAME, '', $locale),
+            'email' => LocalPickup::getConfigValue(LocalPickup::EMAIL_VAR_NAME, '', $locale),
+            'sms' => (bool) LocalPickup::getConfigValue(LocalPickup::SMS_VAR_NAME, false),
+        ]);
+
+        $form->createView();
+
         $event->add(
             $this->render(
-                'module_configuration.html',
-                [
-                    'price' => (float) LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0),
-                    'description' => LocalPickup::getConfigValue(LocalPickup::DESCRIPTION_VAR_NAME, '', $locale),
-                    'email' => LocalPickup::getConfigValue(LocalPickup::EMAIL_VAR_NAME, '', $locale),
-                    'sms' => LocalPickup::getConfigValue(LocalPickup::SMS_VAR_NAME, false),
-                ]
+                'LocalPickup/module_configuration.html.twig',
+                ['form' => $form->getView()]
             )
         );
     }

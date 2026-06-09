@@ -3,20 +3,7 @@
 <config xmlns="http://thelia.net/schema/dic/config"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://thelia.net/schema/dic/config http://thelia.net/schema/dic/config/thelia-1.0.xsd">
-    <forms>
-        <form name="localpickup.form" class="LocalPickup\Form\ConfigurationForm" />
-    </forms>
-
     <loops>
         <loop class="LocalPickup\Loop\LocalAddress" name="address.local" />
     </loops>
-
-    <hooks>
-        <hook id="local.pickup.hook" class="LocalPickup\Hook\HookManager" scope="request">
-            <tag name="hook.event_listener" event="module.configuration" type="back" method="onModuleConfiguration" />
-
-            <tag name="hook.event_listener" event="order-invoice.delivery-address" type="front" method="onOrderInvoiceDeliveryAddress" />
-            <tag name="hook.event_listener" event="order-delivery.extra"  type="front" method="onOrderDeliveryExtra" />
-        </hook>
-    </hooks>
 </config>

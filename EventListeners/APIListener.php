@@ -36,7 +36,10 @@ class APIListener implements EventSubscriberInterface
             return;
         }
 
-        $locale = $this->requestStack->getCurrentRequest()?->getSession()->getLang()->getLocale();
+        $request = $this->requestStack->getCurrentRequest();
+        $locale = (null !== $request && $request->hasSession())
+            ? $request->getSession()->getLang()->getLocale()
+            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
 
         $postage = LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0);
         $commentary = LocalPickup::getConfigValue(

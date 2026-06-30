@@ -54,8 +54,13 @@ class LocalAddress extends BaseLoop implements ArraySearchLoopInterface
     {
         $id = $this->getId();
 
+        $request = $this->requestStack->getCurrentRequest();
+        if (null === $request || !$request->hasSession()) {
+            return [];
+        }
+
         /** @var \Thelia\Core\HttpFoundation\Session\Session $session */
-        $session = $this->requestStack->getCurrentRequest()->getSession();
+        $session = $request->getSession();
 
         $address = AddressQuery::create()
             ->filterByCustomerId($session->getCustomerUser()->getId())

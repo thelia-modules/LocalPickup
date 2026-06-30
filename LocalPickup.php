@@ -57,7 +57,12 @@ class LocalPickup extends AbstractDeliveryModuleWithState
 
     public function getPostage(Country $country, State $state = null): float|\Thelia\Model\OrderPostage
     {
-        return $this->buildOrderPostage(self::getConfigValue(self::PRICE_VAR_NAME, 0), $country, $this->getRequest()->getSession()->getLang()->getLocale());
+        $request = $this->getRequest();
+        $locale = $request->hasSession()
+            ? $request->getSession()->getLang()->getLocale()
+            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
+
+        return $this->buildOrderPostage(self::getConfigValue(self::PRICE_VAR_NAME, 0), $country, $locale);
     }
 
     public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void

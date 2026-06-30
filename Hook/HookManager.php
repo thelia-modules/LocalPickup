@@ -59,7 +59,10 @@ class HookManager extends BaseHook
 
     public function onModuleConfiguration(HookRenderEvent $event): void
     {
-        $locale = $this->getSession()->getAdminEditionLang()->getLocale();
+        $request = $this->getRequest();
+        $locale = (null !== $request && $request->hasSession())
+            ? $request->getSession()->getAdminEditionLang()->getLocale()
+            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
 
         $form = $this->formFactory->createForm(ConfigurationForm::getName(), data: [
             'price' => (float) LocalPickup::getConfigValue(LocalPickup::PRICE_VAR_NAME, 0),
@@ -81,7 +84,9 @@ class HookManager extends BaseHook
     public function onOrderInvoiceDeliveryAddress(HookRenderEvent $event): void
     {
         // Show the local delivery template if we're the current delivery module.
-        if ((null !== $order = $this->getSession()->getOrder()) && $order->getDeliveryModuleId() == LocalPickup::getModuleId()) {
+        $request = $this->getRequest();
+        $order = (null !== $request && $request->hasSession()) ? $request->getSession()->getOrder() : null;
+        if (null !== $order && $order->getDeliveryModuleId() == LocalPickup::getModuleId()) {
             $event->add(
                 $this->render('localpickup/order-invoice-delivery-address.html', [
                     'order_id' => $event->getArgument('order_id'),
@@ -92,13 +97,18 @@ class HookManager extends BaseHook
 
     public function onOrderDeliveryExtra(HookRenderEvent $event): void
     {
+        $request = $this->getRequest();
+        $locale = (null !== $request && $request->hasSession())
+            ? $request->getSession()->getLang()->getLocale()
+            : (\Thelia\Model\LangQuery::create()->findOneByByDefault(true)?->getLocale() ?? 'en_US');
+
         $event->add(
             $this->render(
                 'localpickup/delivery-address.html',
                 [
                     'description' => LocalPickup::getConfigValue(
                         LocalPickup::DESCRIPTION_VAR_NAME, '',
-                        $this->getSession()->getLang()->getLocale()
+                        $locale
                     ),
                 ]
             )

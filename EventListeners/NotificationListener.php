@@ -94,6 +94,7 @@ readonly class NotificationListener implements EventSubscriberInterface
             [
                 'order_id' => $order->getId(),
                 'order_ref' => $order->getRef(),
+                'locale' => $order->getLang()->getLocale(),
                 'comment' => LocalPickup::getConfigValue(
                     LocalPickup::EMAIL_VAR_NAME,
                     '',
@@ -135,6 +136,8 @@ readonly class NotificationListener implements EventSubscriberInterface
         $message->setLocale($order->getLang()->getLocale());
 
         $this->parser->assign('order_id', $order->getId());
+        $this->parser->assign('order_ref', $order->getRef());
+        $this->parser->assign('locale', $order->getLang()->getLocale());
 
         $sms = new SmsMessage(
             $internationalNumber,

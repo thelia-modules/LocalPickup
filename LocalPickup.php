@@ -31,6 +31,9 @@ namespace LocalPickup;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ServicesConfigurator;
 use Thelia\Core\Install\Database;
+use Thelia\Model\AreaDeliveryModule;
+use Thelia\Model\AreaDeliveryModuleQuery;
+use Thelia\Model\CountryAreaQuery;
 use Thelia\Model\Country;
 use Thelia\Model\Message;
 use Thelia\Model\MessageQuery;
@@ -55,7 +58,7 @@ class LocalPickup extends AbstractDeliveryModuleWithState
     public const EMAIL_CUSTOM_LOCAL_PICKUP = 'email_custom_local_pickup';
     public const SMS_CUSTOM_LOCAL_PICKUP = 'sms_custom_local_pickup';
 
-    public function getPostage(Country $country, State $state = null): float|\Thelia\Model\OrderPostage
+    public function getPostage(Country $country, ?State $state = null): float|\Thelia\Model\OrderPostage
     {
         $request = $this->getRequest();
         $locale = $request->hasSession()
@@ -65,38 +68,20 @@ class LocalPickup extends AbstractDeliveryModuleWithState
         return $this->buildOrderPostage(self::getConfigValue(self::PRICE_VAR_NAME, 0), $country, $locale);
     }
 
-    public function update($currentVersion, $newVersion, ConnectionInterface $con = null): void
+    /**
+     * A fresh install has to be usable as is: the pickup is offered in the shipping zones
+     * of the shop's own country, and the notification messages exist. A merchant who
+     * already chose the zones keeps them.
+     */
+    public function postActivation(?ConnectionInterface $con = null): void
     {
-        if (null === MessageQuery::create()->findOneByName(self::EMAIL_CUSTOM_LOCAL_PICKUP)) {
-            $message = new Message();
-            $message
-                ->setName(self::EMAIL_CUSTOM_LOCAL_PICKUP)
-                ->setHtmlTemplateFileName('order_shipping.html')
-                ->setHtmlLayoutFileName('')
-                ->setTextTemplateFileName('order_shipping.txt')
-                ->setTextLayoutFileName('')
-                ->setSecured(0)
-                ->setLocale('fr_FR')
-                ->setTitle('Confirmation de vote commande')
-                ->setSubject('Commande à récupérer en magasin')
-                ->setLocale('en_GB')
-                ->setTitle('Order confirmation')
-                ->setSubject('Order to pick up in store')
-                ->setLocale('de_DE')
-                ->setTitle('Bestellbestätigung')
-                ->setSubject('Bestellung im Geschäft abholen')
-                ->save()
-            ;
-        }
+        $this->attachToShopCountryAreas($con);
+        $this->createMessages($con);
+    }
 
-        if (null === MessageQuery::create()->findOneByName(self::SMS_CUSTOM_LOCAL_PICKUP)) {
-            $message = new Message();
-            $message
-                ->setName(self::SMS_CUSTOM_LOCAL_PICKUP)
-                ->setHtmlTemplateFileName('order_shipping_sms.html')
-                ->save()
-            ;
-        }
+    public function update($currentVersion, $newVersion, ?ConnectionInterface $con = null): void
+    {
+        $this->createMessages($con);
 
         if ($newVersion === '1.2') {
             $db = new Database($con);
@@ -114,7 +99,64 @@ class LocalPickup extends AbstractDeliveryModuleWithState
         }
     }
 
-    public function isValidDelivery(Country $country, State $state = null): bool
+    private function attachToShopCountryAreas(?ConnectionInterface $con): void
+    {
+        $moduleId = $this->getModuleModel()->getId();
+
+        if (AreaDeliveryModuleQuery::create()->filterByDeliveryModuleId($moduleId)->count($con) > 0) {
+            return;
+        }
+
+        $areaIds = CountryAreaQuery::create()
+            ->filterByCountryId(Country::getShopLocation()->getId())
+            ->select(['AreaId'])
+            ->find($con)
+            ->toArray();
+
+        foreach (array_unique($areaIds) as $areaId) {
+            (new AreaDeliveryModule())
+                ->setAreaId((int) $areaId)
+                ->setDeliveryModuleId($moduleId)
+                ->save($con);
+        }
+    }
+
+    private function createMessages(?ConnectionInterface $con): void
+    {
+        if (null === MessageQuery::create()->findOneByName(self::EMAIL_CUSTOM_LOCAL_PICKUP, $con)) {
+            (new Message())
+                ->setName(self::EMAIL_CUSTOM_LOCAL_PICKUP)
+                ->setHtmlTemplateFileName('order_shipping.html')
+                ->setHtmlLayoutFileName('')
+                ->setTextTemplateFileName('order_shipping.txt')
+                ->setTextLayoutFileName('')
+                ->setSecured(0)
+                ->setLocale('fr_FR')
+                ->setTitle('Commande à retirer en magasin')
+                ->setSubject('Commande à récupérer en magasin')
+                ->setLocale('en_US')
+                ->setTitle('Order to pick up in store')
+                ->setSubject('Order to pick up in store')
+                ->setLocale('de_DE')
+                ->setTitle('Bestellung im Geschäft abholen')
+                ->setSubject('Bestellung im Geschäft abholen')
+                ->save($con);
+        }
+
+        if (null === MessageQuery::create()->findOneByName(self::SMS_CUSTOM_LOCAL_PICKUP, $con)) {
+            (new Message())
+                ->setName(self::SMS_CUSTOM_LOCAL_PICKUP)
+                ->setTextTemplateFileName('order_shipping_sms.txt')
+                ->setSecured(0)
+                ->setLocale('fr_FR')
+                ->setTitle('SMS commande à retirer en magasin')
+                ->setLocale('en_US')
+                ->setTitle('Order to pick up in store text message')
+                ->save($con);
+        }
+    }
+
+    public function isValidDelivery(Country $country, ?State $state = null): bool
     {
         return true;
     }

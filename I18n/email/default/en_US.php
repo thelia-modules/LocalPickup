@@ -7,4 +7,5 @@ return array(
     'Delivery address' => 'Delivery address',
     'Thanks' => 'Thanks',
     'The %store team.' => 'The %store team.',
+    'Your order %ref is available in store' => 'Your order %ref is available in store',
 );

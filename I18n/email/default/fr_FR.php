@@ -6,5 +6,6 @@ return array(
     'Come pick up your order at the store' => "Votre commande a été traité, vous pouvez venir récupérer celle-ci en respectant les horaires d'ouverture du magasin.",
     'Delivery address' => 'Adresse de livraison',
     'Thanks' => 'Merci',
-    "The %store team." => "L'équipe %store."
+    "The %store team." => "L'équipe %store.",
+    'Your order %ref is available in store' => 'Votre commande %ref est disponible en magasin',
 );

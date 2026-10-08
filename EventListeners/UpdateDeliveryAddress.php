@@ -36,6 +36,7 @@ use Thelia\Core\Event\Order\OrderAddressEvent;
 use Thelia\Core\Event\Order\OrderEvent;
 use Thelia\Core\Event\TheliaEvents;
 use Thelia\Model\ConfigQuery;
+use Thelia\Model\Country;
 use Thelia\Model\OrderAddressQuery;
 
 /**
@@ -58,12 +59,14 @@ class UpdateDeliveryAddress extends BaseAction implements EventSubscriberInterfa
                 $address1 = ConfigQuery::read('store_address1');
                 $address2 = ConfigQuery::read('store_address2');
                 $address3 = ConfigQuery::read('store_address3');
-                $zipcode = ConfigQuery::read('store_zipcode');
+                // A shop that never filled its zip code or country still has a store: the
+                // zip code stays empty and the country is the one the shop is located in.
+                $zipcode = ConfigQuery::read('store_zipcode') ?? '';
                 $city = ConfigQuery::read('store_city');
-                $country = ConfigQuery::read('store_country');
+                $country = ConfigQuery::read('store_country') ?: Country::getShopLocation()->getId();
                 $name = ConfigQuery::read('store_name');
 
-                if ($address1 !== null && $zipcode !== null && $city !== null && $country !== null) {
+                if (!empty($address1) && !empty($city)) {
                     $address_event = new OrderAddressEvent(
                         $address->getCustomerTitleId(),
                         $address->getFirstname(),

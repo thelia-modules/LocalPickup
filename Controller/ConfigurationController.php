@@ -22,6 +22,7 @@ namespace LocalPickup\Controller;
 use LocalPickup\Form\ConfigurationForm;
 use LocalPickup\LocalPickup;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\Routing\Attribute\Route;
 use Thelia\Controller\Admin\BaseAdminController;
 use Thelia\Core\Security\AccessManager;
 use Thelia\Core\Security\Resource\AdminResources;
@@ -35,6 +36,7 @@ use Thelia\Tools\URL;
  */
 class ConfigurationController extends BaseAdminController
 {
+    #[Route('/admin/module/localpickup/configure', name: 'localpickup.configure', methods: ['POST'])]
     public function configure()
     {
         if (null !== $response = $this->checkAuth([AdminResources::MODULE], ['LocalPickup'], AccessManager::UPDATE)) {

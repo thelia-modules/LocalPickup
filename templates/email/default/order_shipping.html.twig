@@ -1,0 +1,36 @@
+{% extends "email-layout.html.twig" %}
+
+{% set domain = 'localpickup.email.default' %}
+
+{% block browser %}{% endblock %}
+{% block pre_header %}{% endblock %}
+
+{% block email_subject %}{{ 'Your order is available in store'|trans({}, domain, locale) }}{% endblock %}
+
+{% block email_title %}{{ 'Your order is available in store'|trans({}, domain, locale) }}{% endblock %}
+
+{% block email_content %}
+    <p>{{ 'Come pick up your order at the store'|trans({}, domain, locale) }}</p>
+
+    {% for order in loop('order.invoice', 'order', {id: order_id, customer: '*'}) %}
+        <table width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr>
+                <td valign="top" width="55%">
+                    <strong>{{ 'Delivery address'|trans({}, domain, locale) }}:</strong><br>
+                    {{ format_address(order.DELIVERY_ADDRESS, locale)|raw }}
+                </td>
+                <td valign="top" width="45%">
+                    {% if comment %}
+                        <strong>{{ 'Instructions'|trans({}, domain, locale) }}:</strong><br>
+                        {{ comment|nl2br }}
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    {% endfor %}
+
+    <p>
+        {{ 'Thanks'|trans({}, domain, locale) }}<br>
+        {{ 'The %store team.'|trans({'%store': config('store_name')}, domain, locale) }}
+    </p>
+{% endblock %}

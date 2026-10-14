@@ -1,0 +1,12 @@
+{% set domain = 'localpickup.email.default' %}
+{{ 'Your order is available in store'|trans({}, domain, locale) }}
+
+{{ 'Come pick up your order at the store'|trans({}, domain, locale) }}
+{% if comment %}
+
+{{ 'Instructions'|trans({}, domain, locale) }}:
+{{ comment }}
+{% endif %}
+
+{{ 'Thanks'|trans({}, domain, locale) }}
+{{ 'The %store team.'|trans({'%store': config('store_name')}, domain, locale) }}
